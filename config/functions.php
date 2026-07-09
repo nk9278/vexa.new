@@ -1,6 +1,7 @@
 <?php
 // File: /config/functions.php
 require_once __DIR__ . '/constants.php';
+require_once __DIR__ . '/../includes/notification_functions.php';
 
 function redirect($path) {
     header("Location: " . BASE_URL . $path);

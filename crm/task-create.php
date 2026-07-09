@@ -72,9 +72,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $emp_id = filter_var($emp_id, FILTER_VALIDATE_INT);
                             if (in_array($emp_id, $valid_employees)) {
                                 $assign_stmt->execute(['task_id' => $task_id, 'employee_id' => $emp_id]);
+                                createNotification($emp_id, 'Task Assigned', "You were assigned to task: $task_name", "/employee/task-view.php?id=$task_id");
                             }
                         }
                     }
+
+                    logActivity($agency_id, $user_id, 'Task Created', "Task '$task_name' created.", $project_id);
+                    logAudit($agency_id, $user_id, 'CRM', "Created Task: $task_name", $project_id);
 
                     $pdo->commit();
                     $_SESSION['success_msg'] = "Task created successfully.";

@@ -136,6 +136,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt = $pdo->prepare("UPDATE tasks SET status = 'Waiting For Approval' WHERE id = :task_id");
                 $stmt->execute(['task_id' => $task_id]);
 
+                // Log and notify CRM
+                $stmt_crm = $pdo->prepare("SELECT crm_id, project_id FROM tasks WHERE id = :task_id");
+                $stmt_crm->execute(['task_id' => $task_id]);
+                $task_info = $stmt_crm->fetch();
+                if ($task_info) {
+                    $agency_id = $_SESSION['agency_id'];
+                    logActivity($agency_id, $user_id, 'Work Submitted', "Revision #" . ($new_revision_count + 1) . " submitted.", $task_info['project_id'], null, $voice_note_path);
+                    logAudit($agency_id, $user_id, 'Employee', "Submitted work for task ($task_id)", $task_info['project_id']);
+                    createNotification($task_info['crm_id'], 'Submission Received', "Work submitted for task: " . $task['task_name'], "/crm/submission-review.php?id=$submission_id");
+                }
+
                 $pdo->commit();
                 $_SESSION['success_msg'] = "Work submitted successfully and is pending review.";
                 redirect('/employee/task-view.php?id=' . $task_id);

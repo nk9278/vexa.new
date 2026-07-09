@@ -67,6 +67,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $pdo->prepare("INSERT INTO project_payments (project_id, project_amount, pending_amount) VALUES (:project_id, :amount, :amount)");
             $stmt->execute(['project_id' => $project_id, 'amount' => $project_amount ?: 0]);
 
+            logActivity($agency_id, $_SESSION['user_id'], 'New Project Created', "Project '$project_name' was created.", $project_id, $client_id);
+            logAudit($agency_id, $_SESSION['user_id'], $_SESSION['role_name'], "Created Project: $project_name", $project_id, $client_id);
+            createNotification($crm_id, 'Assigned to Project', "You have been assigned to project: $project_name", "/crm/project-view.php?id=$project_id");
+
             $pdo->commit();
             $_SESSION['success_msg'] = "Project created successfully.";
             redirect('/manager/projects.php');

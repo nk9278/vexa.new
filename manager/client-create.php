@@ -65,6 +65,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'notes' => $notes,
                     'status' => $status
                 ]);
+                $client_id = $pdo->lastInsertId();
+
+                logActivity($agency_id, $_SESSION['user_id'], 'New Client Created', "Client '$client_name' was added.", null, $client_id);
+                logAudit($agency_id, $_SESSION['user_id'], $_SESSION['role_name'], "Created Client: $client_name", null, $client_id);
+
                 $_SESSION['success_msg'] = "Client added successfully.";
                 redirect('/manager/clients.php');
             } catch (PDOException $e) {

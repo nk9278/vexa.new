@@ -65,6 +65,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['assign'])) {
             $stmt = $pdo->prepare("INSERT INTO project_assignments (project_id, employee_id, role) VALUES (:project_id, :employee_id, :role)");
             try {
                 $stmt->execute(['project_id' => $project_id, 'employee_id' => $employee_id, 'role' => $role]);
+
+                logActivity($agency_id, $_SESSION['user_id'], 'Employee Assigned', "Employee assigned as $role.", $project_id);
+                logAudit($agency_id, $_SESSION['user_id'], $_SESSION['role_name'], "Assigned employee ($employee_id) to Project ($project_id) as $role", $project_id);
+                createNotification($employee_id, 'Assigned to Project', "You have been assigned to project: " . $project['project_name'], "/employee/projects.php");
+
                 $_SESSION['success_msg'] = "Employee assigned successfully.";
                 redirect('/manager/project-team.php?id=' . $project_id);
             } catch (PDOException $e) {
