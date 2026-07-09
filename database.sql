@@ -76,3 +76,67 @@ CREATE TABLE `password_resets` (
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX (`email_address`)
 );
+
+CREATE TABLE IF NOT EXISTS `clients` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `agency_id` INT NOT NULL,
+    `client_name` VARCHAR(100) NOT NULL,
+    `company_name` VARCHAR(100),
+    `contact_person` VARCHAR(100),
+    `email` VARCHAR(150) NOT NULL,
+    `phone` VARCHAR(30) NOT NULL,
+    `gst_number` VARCHAR(50),
+    `address` TEXT,
+    `city` VARCHAR(100),
+    `state` VARCHAR(100),
+    `country` VARCHAR(100),
+    `notes` TEXT,
+    `status` ENUM('Active', 'Inactive') DEFAULT 'Active',
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+    FOREIGN KEY (`agency_id`) REFERENCES `agencies`(`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `projects` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `agency_id` INT NOT NULL,
+    `client_id` INT NOT NULL,
+    `project_name` VARCHAR(255) NOT NULL,
+    `project_type` VARCHAR(100) NOT NULL,
+    `description` TEXT,
+    `start_date` DATE,
+    `expected_completion_date` DATE,
+    `status` ENUM('Running', 'Pending', 'Completed', 'On Hold', 'Cancelled') DEFAULT 'Pending',
+    `priority` ENUM('Low', 'Medium', 'High') DEFAULT 'Medium',
+    `crm_id` INT NOT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+    FOREIGN KEY (`agency_id`) REFERENCES `agencies`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`client_id`) REFERENCES `clients`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`crm_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT
+);
+
+CREATE TABLE IF NOT EXISTS `project_assignments` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `project_id` INT NOT NULL,
+    `employee_id` INT NOT NULL,
+    `role` VARCHAR(100),
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`employee_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `project_payments` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `project_id` INT NOT NULL UNIQUE,
+    `project_amount` DECIMAL(12,2) DEFAULT 0.00,
+    `received_amount` DECIMAL(12,2) DEFAULT 0.00,
+    `pending_amount` DECIMAL(12,2) DEFAULT 0.00,
+    `payment_status` ENUM('Pending', 'Partial', 'Completed') DEFAULT 'Pending',
+    `last_payment_date` DATE,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`) ON DELETE CASCADE
+);

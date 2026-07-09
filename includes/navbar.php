@@ -33,6 +33,19 @@
     <a href="/agency/reports.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], 'report') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
         Reports
     </a>
+<?php elseif (isset($_SESSION['role_name']) && $_SESSION['role_name'] === 'Manager'): ?>
+    <a href="/manager/dashboard.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], 'dashboard.php') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+        Dashboard
+    </a>
+    <a href="/manager/clients.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], 'client') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+        Clients
+    </a>
+    <a href="/manager/projects.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], 'project') !== false && strpos($_SERVER['REQUEST_URI'], 'project-payment.php') === false && strpos($_SERVER['REQUEST_URI'], 'project-team.php') === false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+        Projects
+    </a>
+    <a href="/manager/payments.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], 'payment') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+        Payments
+    </a>
 <?php else: ?>
     <a href="#" class="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
         Dashboard
