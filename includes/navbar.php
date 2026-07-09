@@ -11,6 +11,9 @@
     <a href="/super-admin/agencies.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], 'agenc') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
         Agencies
     </a>
+    <a href="/reports/dashboard.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], '/reports') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+        Reports
+    </a>
     <a href="/notifications/index.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], '/notifications') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
         Notifications
     </a>
@@ -58,6 +61,9 @@
     <a href="/manager/payments.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], 'payment') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
         Payments
     </a>
+    <a href="/reports/dashboard.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], '/reports') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+        Reports
+    </a>
     <a href="/notifications/index.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], '/notifications') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
         Notifications
     </a>
@@ -77,6 +83,9 @@
     <a href="/crm/tasks.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], 'task') !== false && strpos($_SERVER['REQUEST_URI'], 'task-submissions.php') === false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
         Tasks
     </a>
+    <a href="/reports/dashboard.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], '/reports') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+        Reports
+    </a>
     <a href="/notifications/index.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], '/notifications') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
         Notifications
     </a>
@@ -95,6 +104,9 @@
     </a>
     <a href="/employee/clients.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], 'client') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
         My Clients
+    </a>
+    <a href="/reports/dashboard.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], '/reports') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+        Performance
     </a>
     <a href="/notifications/index.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], '/notifications') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
         Notifications
