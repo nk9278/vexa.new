@@ -17,9 +17,10 @@ if (!$task_id) {
 
 // Fetch Task Details & Verify assignment
 $stmt = $pdo->prepare("
-    SELECT t.id, t.task_name, t.status
+    SELECT t.id, t.task_name, t.status, pa.role as my_role
     FROM tasks t
     JOIN task_assignments ta ON t.id = ta.task_id
+    LEFT JOIN project_assignments pa ON t.project_id = pa.project_id AND pa.employee_id = :employee_id
     WHERE t.id = :id AND ta.employee_id = :employee_id AND t.deleted_at IS NULL
 ");
 $stmt->execute(['id' => $task_id, 'employee_id' => $user_id]);
@@ -62,11 +63,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $upload_dir = __DIR__ . '/../uploads/submissions/';
             if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
 
-            // Allow common types except executables
+            // Use strict whitelist
+            $allowed_file_exts = ['zip', 'rar', 'jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'mp4', 'mov', 'psd', 'ai'];
             $file_info = pathinfo($_FILES['work_file']['name']);
             $ext = strtolower($file_info['extension'] ?? '');
-            if (in_array($ext, ['php', 'exe', 'sh', 'bat', 'js', 'html', 'htm', 'phtml'])) {
-                $error = "Invalid file type.";
+
+            if (!in_array($ext, $allowed_file_exts)) {
+                $error = "Invalid file type. Allowed: " . implode(', ', $allowed_file_exts);
             } else {
                 $filename = uniqid('sub_', true) . '.' . $ext;
                 if (move_uploaded_file($_FILES['work_file']['tmp_name'], $upload_dir . $filename)) {
@@ -173,13 +176,58 @@ include __DIR__ . '/header.php';
 
             <div class="space-y-6">
 
+                <?php
+                $role = $task['my_role'] ?? '';
+                $text_label = "Submission Notes / Link";
+                $text_placeholder = "Add text, links to external docs (like Google Drive), or general notes about your work...";
+                $file_label = "File Attachment (Optional)";
+                $file_subtext = "Images, Videos, Docs (Max size depends on server)";
+
+                if ($role === 'Sales') {
+                    $text_label = "Meeting/Visit Notes & Updates";
+                    $text_placeholder = "Document your visit status, meeting outcomes, or generic notes...";
+                    $file_label = "Upload Documents (Optional)";
+                    $file_subtext = "PDF, DOCX, Images of contracts/proposals";
+                } elseif ($role === 'Photographer') {
+                    $text_label = "Shoot Notes & Link to RAW Files";
+                    $text_placeholder = "Provide a Google Drive link for heavy RAW/Video files, and add shoot notes...";
+                    $file_label = "Upload Photos / Videos (Optional)";
+                    $file_subtext = "JPG, PNG, MP4 (Watch out for upload size limits)";
+                } elseif ($role === 'Graphic Designer') {
+                    $text_label = "Design Explanation & Links";
+                    $text_placeholder = "Explain design choices, or link to Figma/Canva source files...";
+                    $file_label = "Upload Design Files / Source Files";
+                    $file_subtext = "JPG, PNG, PDF, PSD, AI (Zip heavy source files)";
+                } elseif ($role === 'Video Editor') {
+                    $text_label = "Editing Notes & Video Link";
+                    $text_placeholder = "Provide a Drive/Vimeo link to the final video, plus processing notes...";
+                    $file_label = "Upload Edited Video / Project Files";
+                    $file_subtext = "MP4, ZIP (Watch out for upload size limits)";
+                } elseif ($role === 'Content Writer') {
+                    $text_label = "Content Draft & References";
+                    $text_placeholder = "Write the content here, or paste a link to Google Docs...";
+                    $file_label = "Upload Content Documents";
+                    $file_subtext = "DOCX, PDF, TXT";
+                } elseif ($role === 'Content Approval') {
+                    $text_label = "Review Notes & Feedback";
+                    $text_placeholder = "Provide detailed review notes. Approve or request revisions via text...";
+                    $file_label = "Upload Reviewed/Annotated Documents";
+                    $file_subtext = "PDF, DOCX with tracked changes";
+                } elseif ($role === 'Web Developer') {
+                    $text_label = "Deployment Notes & Links";
+                    $text_placeholder = "Paste staging URL, GitHub PR link, or deployment notes...";
+                    $file_label = "Upload Code Package / Screenshots";
+                    $file_subtext = "ZIP, JPG, PNG";
+                }
+                ?>
+
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Submission Notes / Link</label>
-                    <textarea name="submission_text" rows="5" placeholder="Add text, links to external docs (like Google Drive), or general notes about your work..." class="w-full px-4 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500 outline-none"></textarea>
+                    <label class="block text-sm font-medium text-gray-700 mb-1"><?php echo $text_label; ?></label>
+                    <textarea name="submission_text" rows="5" placeholder="<?php echo $text_placeholder; ?>" class="w-full px-4 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500 outline-none"></textarea>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">File Attachment (Optional)</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1"><?php echo $file_label; ?></label>
                     <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg bg-gray-50 hover:bg-gray-100 transition">
                         <div class="space-y-1 text-center">
                             <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
@@ -191,7 +239,7 @@ include __DIR__ . '/header.php';
                                     <input id="file-upload" name="work_file" type="file" class="sr-only">
                                 </label>
                             </div>
-                            <p class="text-xs text-gray-500">Images, Videos, Docs (Max size depends on server)</p>
+                            <p class="text-xs text-gray-500"><?php echo $file_subtext; ?></p>
                         </div>
                     </div>
                 </div>

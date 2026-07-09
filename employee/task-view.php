@@ -19,11 +19,12 @@ if (!$task_id) {
 
 // Fetch Task Details (Verify assignment)
 $stmt = $pdo->prepare("
-    SELECT t.*, p.project_name, c.client_name
+    SELECT t.*, p.project_name, c.client_name, pa.role as my_role
     FROM tasks t
     JOIN projects p ON t.project_id = p.id
     JOIN clients c ON p.client_id = c.id
     JOIN task_assignments ta ON t.id = ta.task_id
+    LEFT JOIN project_assignments pa ON p.id = pa.project_id AND pa.employee_id = :employee_id
     WHERE t.id = :id AND ta.employee_id = :employee_id AND t.deleted_at IS NULL
 ");
 $stmt->execute(['id' => $task_id, 'employee_id' => $user_id]);
@@ -173,6 +174,34 @@ include __DIR__ . '/header.php';
                     <dd class="mt-1 text-sm text-gray-900 bg-gray-50 p-4 rounded-lg border border-gray-100">
                         <?php echo nl2br(htmlspecialchars($task['description'] ?: 'No description provided.')); ?>
                     </dd>
+                </div>
+
+                <div class="sm:col-span-2 mt-4">
+                    <div class="bg-indigo-50 border border-indigo-100 rounded-lg p-4">
+                        <h4 class="text-sm font-bold text-indigo-800 mb-2">Workflow Instructions: <?php echo htmlspecialchars($task['my_role'] ?: 'Generic'); ?></h4>
+                        <ul class="list-disc pl-5 text-sm text-indigo-700 space-y-1">
+                            <?php
+                            $role = $task['my_role'] ?? '';
+                            if ($role === 'Sales') {
+                                echo "<li>Update Visit Status in notes.</li><li>Add Meeting Notes or Voice Notes.</li><li>Upload required Documents.</li><li>Mark complete by submitting.</li>";
+                            } elseif ($role === 'Photographer') {
+                                echo "<li>Review Client Details.</li><li>Upload Edited Photos and RAW Files.</li><li>Upload Videos if applicable.</li><li>Add text or voice notes.</li>";
+                            } elseif ($role === 'Graphic Designer') {
+                                echo "<li>Review Design Task.</li><li>Upload Design Files (e.g. JPG, PNG).</li><li>Upload Source Files (e.g. PSD, AI).</li><li>Add explanatory text or voice notes.</li>";
+                            } elseif ($role === 'Video Editor') {
+                                echo "<li>Review Video Task.</li><li>Upload Edited Video.</li><li>Upload Project Files if required.</li><li>Add processing or rendering notes.</li>";
+                            } elseif ($role === 'Content Writer') {
+                                echo "<li>Write content based on task description.</li><li>Upload Content Documents (e.g. DOCX, PDF).</li><li>Add reference links or voice notes.</li>";
+                            } elseif ($role === 'Content Approval') {
+                                echo "<li>Review assigned content from writer.</li><li>Approve or Request Revision.</li><li>Add feedback text or voice notes.</li><li>Submit to forward to CRM.</li>";
+                            } elseif ($role === 'Web Developer') {
+                                echo "<li>Review Development Task.</li><li>Upload Code Package or Screenshots.</li><li>Upload Technical Documents.</li><li>Add deployment or testing notes.</li>";
+                            } else {
+                                echo "<li>View Task details.</li><li>Upload required files.</li><li>Add text or voice notes explaining work.</li><li>Submit for CRM review.</li>";
+                            }
+                            ?>
+                        </ul>
+                    </div>
                 </div>
             </dl>
         </div>
