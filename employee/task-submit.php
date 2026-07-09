@@ -1,0 +1,222 @@
+<?php
+// File: /employee/task-submit.php
+require_once __DIR__ . '/../config/session.php';
+require_once __DIR__ . '/../config/auth.php';
+require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/functions.php';
+
+checkAuth(['Employee']);
+
+$pdo = getDbConnection();
+$user_id = $_SESSION['user_id'];
+$task_id = isset($_GET['id']) ? filter_var($_GET['id'], FILTER_VALIDATE_INT) : 0;
+
+if (!$task_id) {
+    redirect('/employee/tasks.php');
+}
+
+// Fetch Task Details & Verify assignment
+$stmt = $pdo->prepare("
+    SELECT t.id, t.task_name, t.status
+    FROM tasks t
+    JOIN task_assignments ta ON t.id = ta.task_id
+    WHERE t.id = :id AND ta.employee_id = :employee_id AND t.deleted_at IS NULL
+");
+$stmt->execute(['id' => $task_id, 'employee_id' => $user_id]);
+$task = $stmt->fetch();
+
+if (!$task) {
+    redirect('/employee/tasks.php');
+}
+
+// Must be in a state allowing submission
+if (!in_array($task['status'], ['In Progress', 'Revision Required'])) {
+    $_SESSION['error_msg'] = "You cannot submit work unless the task is In Progress or Revision Required.";
+    redirect('/employee/task-view.php?id=' . $task_id);
+}
+
+// Get the latest revision count for this employee and task
+$stmt = $pdo->prepare("SELECT MAX(revision_count) as max_rev FROM task_submissions WHERE task_id = :task_id AND employee_id = :employee_id");
+$stmt->execute(['task_id' => $task_id, 'employee_id' => $user_id]);
+$current_revision = $stmt->fetchColumn() ?? -1; // -1 if no submissions yet
+$new_revision_count = $current_revision + 1;
+
+$error = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $csrf_token = $_POST['csrf_token'] ?? '';
+    if (!verifyCsrfToken($csrf_token)) {
+        $error = "Invalid CSRF token.";
+    } else {
+        $submission_text = sanitizeInput($_POST['submission_text'] ?? '');
+        $file_path = null;
+        $voice_note_path = null;
+
+        // Ensure at least one thing is submitted
+        if (empty($submission_text) && empty($_FILES['work_file']['name']) && empty($_FILES['voice_note']['name'])) {
+            $error = "You must provide text, a voice note, or a file attachment.";
+        }
+
+        // Handle File Upload
+        if (!$error && isset($_FILES['work_file']) && $_FILES['work_file']['error'] === UPLOAD_ERR_OK) {
+            $upload_dir = __DIR__ . '/../uploads/submissions/';
+            if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
+
+            // Allow common types except executables
+            $file_info = pathinfo($_FILES['work_file']['name']);
+            $ext = strtolower($file_info['extension'] ?? '');
+            if (in_array($ext, ['php', 'exe', 'sh', 'bat', 'js', 'html', 'htm', 'phtml'])) {
+                $error = "Invalid file type.";
+            } else {
+                $filename = uniqid('sub_', true) . '.' . $ext;
+                if (move_uploaded_file($_FILES['work_file']['tmp_name'], $upload_dir . $filename)) {
+                    $file_path = '/uploads/submissions/' . $filename;
+                } else {
+                    $error = "Failed to upload work file.";
+                }
+            }
+        }
+
+        // Handle Voice Note Upload
+        if (!$error && isset($_FILES['voice_note']) && $_FILES['voice_note']['error'] === UPLOAD_ERR_OK) {
+            $allowed_audio = ['mp3', 'wav', 'ogg', 'm4a', 'webm'];
+            $file_info = pathinfo($_FILES['voice_note']['name']);
+            $ext = strtolower($file_info['extension'] ?? '');
+
+            if (!in_array($ext, $allowed_audio)) {
+                $error = "Invalid audio format.";
+            } else {
+                $upload_dir = __DIR__ . '/../uploads/voice_notes/';
+                if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
+
+                $filename = uniqid('vn_', true) . '.' . $ext;
+                if (move_uploaded_file($_FILES['voice_note']['tmp_name'], $upload_dir . $filename)) {
+                    $voice_note_path = '/uploads/voice_notes/' . $filename;
+                } else {
+                    $error = "Failed to upload voice note.";
+                }
+            }
+        }
+
+        if (!$error) {
+            $pdo->beginTransaction();
+            try {
+                // Insert Submission
+                $stmt = $pdo->prepare("
+                    INSERT INTO task_submissions (task_id, employee_id, submission_text, file_path, status, revision_count)
+                    VALUES (:task_id, :employee_id, :submission_text, :file_path, 'Pending Review', :revision_count)
+                ");
+                $stmt->execute([
+                    'task_id' => $task_id,
+                    'employee_id' => $user_id,
+                    'submission_text' => $submission_text,
+                    'file_path' => $file_path,
+                    'revision_count' => $new_revision_count
+                ]);
+                $submission_id = $pdo->lastInsertId();
+
+                // If Voice Note was provided, attach it via task_comments
+                if ($voice_note_path) {
+                    $stmt = $pdo->prepare("
+                        INSERT INTO task_comments (task_id, submission_id, user_id, comment_text, voice_note_path)
+                        VALUES (:task_id, :submission_id, :user_id, 'Voice note attached to submission', :voice_note_path)
+                    ");
+                    $stmt->execute([
+                        'task_id' => $task_id,
+                        'submission_id' => $submission_id,
+                        'user_id' => $user_id,
+                        'voice_note_path' => $voice_note_path
+                    ]);
+                }
+
+                // Update Task Status to Waiting For Approval
+                $stmt = $pdo->prepare("UPDATE tasks SET status = 'Waiting For Approval' WHERE id = :task_id");
+                $stmt->execute(['task_id' => $task_id]);
+
+                $pdo->commit();
+                $_SESSION['success_msg'] = "Work submitted successfully and is pending review.";
+                redirect('/employee/task-view.php?id=' . $task_id);
+            } catch (PDOException $e) {
+                $pdo->rollBack();
+                $error = "Database error: " . $e->getMessage();
+            }
+        }
+    }
+}
+
+include __DIR__ . '/header.php';
+?>
+
+<div class="px-4 py-5 sm:px-6">
+    <div class="flex items-center mb-4">
+        <a href="task-view.php?id=<?php echo $task_id; ?>" class="text-gray-500 hover:text-gray-700 mr-4">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+        </a>
+        <h1 class="text-2xl font-bold leading-tight text-gray-900">Submit Work: <?php echo htmlspecialchars($task['task_name']); ?></h1>
+    </div>
+</div>
+
+<div class="px-4 sm:px-6 mb-16">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden max-w-3xl">
+        <form method="POST" action="task-submit.php?id=<?php echo $task_id; ?>" enctype="multipart/form-data" class="p-6 sm:p-8">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
+
+            <?php if ($error): ?>
+                <div class="bg-red-50 text-red-500 p-4 rounded-lg mb-6 text-sm">
+                    <?php echo $error; ?>
+                </div>
+            <?php endif; ?>
+
+            <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg mb-6">
+                <p class="text-sm text-blue-800">You are submitting <strong>Revision #<?php echo $new_revision_count + 1; ?></strong> for this task. Submitting work will change the task status to <em>Waiting For Approval</em>.</p>
+            </div>
+
+            <div class="space-y-6">
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Submission Notes / Link</label>
+                    <textarea name="submission_text" rows="5" placeholder="Add text, links to external docs (like Google Drive), or general notes about your work..." class="w-full px-4 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500 outline-none"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">File Attachment (Optional)</label>
+                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg bg-gray-50 hover:bg-gray-100 transition">
+                        <div class="space-y-1 text-center">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            <div class="flex text-sm text-gray-600 justify-center">
+                                <label for="file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+                                    <span>Upload a file</span>
+                                    <input id="file-upload" name="work_file" type="file" class="sr-only">
+                                </label>
+                            </div>
+                            <p class="text-xs text-gray-500">Images, Videos, Docs (Max size depends on server)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Voice Note (Optional)</label>
+                    <div class="flex items-center justify-center w-full">
+                        <label class="flex flex-col items-center justify-center w-full h-24 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                <svg class="w-6 h-6 text-gray-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                                <p class="text-xs text-gray-500">Click to upload audio file</p>
+                            </div>
+                            <input type="file" name="voice_note" accept="audio/*" class="hidden" />
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="mt-8 pt-5 border-t border-gray-200 flex justify-end">
+                <a href="task-view.php?id=<?php echo $task_id; ?>" class="bg-white border border-gray-300 text-gray-700 px-6 py-2 rounded-full hover:bg-gray-50 transition mr-3">Cancel</a>
+                <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-full hover:bg-indigo-700 transition shadow-sm">Submit Work</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<?php include __DIR__ . '/footer.php'; ?>
