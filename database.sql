@@ -239,3 +239,47 @@ CREATE TABLE IF NOT EXISTS `audit_logs` (
     FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`) ON DELETE CASCADE,
     FOREIGN KEY (`client_id`) REFERENCES `clients`(`id`) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS `google_drive_accounts` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `agency_id` INT NOT NULL UNIQUE,
+    `access_token` TEXT NOT NULL,
+    `refresh_token` TEXT NOT NULL,
+    `token_expires_at` INT NOT NULL,
+    `email` VARCHAR(150),
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (`agency_id`) REFERENCES `agencies`(`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `google_drive_folders` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `agency_id` INT NOT NULL,
+    `entity_type` ENUM('Agency', 'Client', 'Project', 'Category') NOT NULL,
+    `entity_id` INT DEFAULT NULL,
+    `folder_name` VARCHAR(255) NOT NULL,
+    `drive_folder_id` VARCHAR(255) NOT NULL,
+    `parent_folder_id` VARCHAR(255) DEFAULT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`agency_id`) REFERENCES `agencies`(`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `google_drive_files` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `agency_id` INT NOT NULL,
+    `project_id` INT NOT NULL,
+    `uploader_id` INT NOT NULL,
+    `folder_id` INT DEFAULT NULL,
+    `file_name` VARCHAR(255) NOT NULL,
+    `drive_file_id` VARCHAR(255) NOT NULL,
+    `drive_link` TEXT,
+    `file_size` BIGINT DEFAULT 0,
+    `file_type` VARCHAR(50),
+    `status` ENUM('Active', 'Deleted') DEFAULT 'Active',
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (`agency_id`) REFERENCES `agencies`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`uploader_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`folder_id`) REFERENCES `google_drive_folders`(`id`) ON DELETE SET NULL
+);

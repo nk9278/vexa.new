@@ -56,8 +56,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
 
                 $filename = uniqid('vn_', true) . '.' . $ext;
-                if (move_uploaded_file($_FILES['voice_note']['tmp_name'], $upload_dir . $filename)) {
-                    $voice_note_path = '/uploads/voice_notes/' . $filename;
+                $full_local_path = $upload_dir . $filename;
+                if (move_uploaded_file($_FILES['voice_note']['tmp_name'], $full_local_path)) {
+
+                    // Try to upload to Google Drive
+                    $stmt_proj = $pdo->prepare("SELECT project_id FROM tasks WHERE id = :id");
+                    $stmt_proj->execute(['id' => $submission['task_id']]);
+                    $project_id = $stmt_proj->fetchColumn();
+
+                    $drive_result = uploadToGoogleDrive($_SESSION['agency_id'], $project_id, $user_id, 'Other', $full_local_path, $_FILES['voice_note']['name'], $_FILES['voice_note']['size']);
+
+                    if ($drive_result && isset($drive_result['drive_link'])) {
+                        $voice_note_path = $drive_result['drive_link']; // Replace local path with drive link
+                    } else {
+                        $voice_note_path = '/uploads/voice_notes/' . $filename; // Fallback to local
+                    }
                 } else {
                     $error = "Failed to upload voice note.";
                 }

@@ -14,6 +14,9 @@
     <a href="/notifications/index.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], '/notifications') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
         Notifications
     </a>
+    <a href="/files/index.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], '/files') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+        Files
+    </a>
 <?php elseif (isset($_SESSION['role_name']) && $_SESSION['role_name'] === 'Agency Owner'): ?>
     <a href="/agency/dashboard.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], 'dashboard.php') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
         Dashboard
@@ -39,6 +42,9 @@
     <a href="/notifications/index.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], '/notifications') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
         Notifications
     </a>
+    <a href="/files/index.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], '/files') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+        Files
+    </a>
 <?php elseif (isset($_SESSION['role_name']) && $_SESSION['role_name'] === 'Manager'): ?>
     <a href="/manager/dashboard.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], 'dashboard.php') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
         Dashboard
@@ -54,6 +60,9 @@
     </a>
     <a href="/notifications/index.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], '/notifications') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
         Notifications
+    </a>
+    <a href="/files/index.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], '/files') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+        Files
     </a>
 <?php elseif (isset($_SESSION['role_name']) && $_SESSION['role_name'] === 'CRM'): ?>
     <a href="/crm/dashboard.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], 'dashboard.php') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
@@ -71,6 +80,9 @@
     <a href="/notifications/index.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], '/notifications') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
         Notifications
     </a>
+    <a href="/files/index.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], '/files') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+        Files
+    </a>
 <?php elseif (isset($_SESSION['role_name']) && $_SESSION['role_name'] === 'Employee'): ?>
     <a href="/employee/dashboard.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], 'dashboard.php') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
         Dashboard
@@ -86,6 +98,9 @@
     </a>
     <a href="/notifications/index.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], '/notifications') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
         Notifications
+    </a>
+    <a href="/files/index.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], '/files') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+        Files
     </a>
 <?php else: ?>
     <a href="#" class="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">

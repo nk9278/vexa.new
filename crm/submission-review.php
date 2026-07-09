@@ -63,7 +63,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $target_file = $upload_dir . $filename;
 
                 if (move_uploaded_file($_FILES['voice_note']['tmp_name'], $target_file)) {
-                    $voice_note_path = '/uploads/voice_notes/' . $filename;
+                    // Try to upload to Google Drive
+                    $drive_result = uploadToGoogleDrive($_SESSION['agency_id'], $submission['task_id'], $user_id, 'Other', $target_file, $_FILES['voice_note']['name'], $_FILES['voice_note']['size']);
+
+                    if ($drive_result && isset($drive_result['drive_link'])) {
+                        $voice_note_path = $drive_result['drive_link']; // Replace local path with drive link
+                    } else {
+                        $voice_note_path = '/uploads/voice_notes/' . $filename; // Fallback to local
+                    }
                 } else {
                     $error = "Failed to save voice note.";
                 }

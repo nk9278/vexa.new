@@ -17,7 +17,7 @@ if (!$task_id) {
 
 // Fetch Task Details & Verify assignment
 $stmt = $pdo->prepare("
-    SELECT t.id, t.task_name, t.status, pa.role as my_role
+    SELECT t.id, t.project_id, t.task_name, t.status, pa.role as my_role
     FROM tasks t
     JOIN task_assignments ta ON t.id = ta.task_id
     LEFT JOIN project_assignments pa ON t.project_id = pa.project_id AND pa.employee_id = :employee_id
@@ -72,8 +72,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = "Invalid file type. Allowed: " . implode(', ', $allowed_file_exts);
             } else {
                 $filename = uniqid('sub_', true) . '.' . $ext;
-                if (move_uploaded_file($_FILES['work_file']['tmp_name'], $upload_dir . $filename)) {
-                    $file_path = '/uploads/submissions/' . $filename;
+                $full_local_path = $upload_dir . $filename;
+                if (move_uploaded_file($_FILES['work_file']['tmp_name'], $full_local_path)) {
+                    // Try to upload to Google Drive
+                    $drive_result = uploadToGoogleDrive($_SESSION['agency_id'], $task['project_id'], $user_id, $task['my_role'] ?? 'Other', $full_local_path, $_FILES['work_file']['name'], $_FILES['work_file']['size']);
+
+                    if ($drive_result && isset($drive_result['drive_link'])) {
+                        $file_path = $drive_result['drive_link']; // Replace local path with drive link
+                    } else {
+                        $file_path = '/uploads/submissions/' . $filename; // Fallback to local
+                    }
                 } else {
                     $error = "Failed to upload work file.";
                 }
@@ -93,8 +101,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
 
                 $filename = uniqid('vn_', true) . '.' . $ext;
-                if (move_uploaded_file($_FILES['voice_note']['tmp_name'], $upload_dir . $filename)) {
-                    $voice_note_path = '/uploads/voice_notes/' . $filename;
+                $full_local_path = $upload_dir . $filename;
+                if (move_uploaded_file($_FILES['voice_note']['tmp_name'], $full_local_path)) {
+                    // Try to upload to Google Drive
+                    $drive_result = uploadToGoogleDrive($_SESSION['agency_id'], $task['project_id'], $user_id, 'Other', $full_local_path, $_FILES['voice_note']['name'], $_FILES['voice_note']['size']);
+
+                    if ($drive_result && isset($drive_result['drive_link'])) {
+                        $voice_note_path = $drive_result['drive_link']; // Replace local path with drive link
+                    } else {
+                        $voice_note_path = '/uploads/voice_notes/' . $filename; // Fallback to local
+                    }
                 } else {
                     $error = "Failed to upload voice note.";
                 }
