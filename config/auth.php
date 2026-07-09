@@ -23,7 +23,11 @@ function loginUser($email, $password, $auto_redirect = true) {
         $_SESSION['agency_id'] = $user['agency_id'];
 
         if ($auto_redirect) {
-            redirectUserByRole($user['role_name']);
+            if ($user['force_password_change']) {
+                redirect('/force-password-change.php');
+            } else {
+                redirectUserByRole($user['role_name']);
+            }
         }
         return true;
     }
@@ -33,6 +37,17 @@ function loginUser($email, $password, $auto_redirect = true) {
 function checkAuth($allowed_roles = []) {
     if (!isset($_SESSION['user_id'])) {
         redirect('/login.php');
+    }
+
+    // Protect against skipping force password change
+    // Exception: Do not redirect if they are already on the force-password-change.php or logout.php pages
+    if (strpos($_SERVER['REQUEST_URI'], 'force-password-change.php') === false && strpos($_SERVER['REQUEST_URI'], 'logout.php') === false) {
+        $pdo = getDbConnection();
+        $stmt = $pdo->prepare("SELECT force_password_change FROM users WHERE id = :id");
+        $stmt->execute(['id' => $_SESSION['user_id']]);
+        if ($stmt->fetchColumn()) {
+            redirect('/force-password-change.php');
+        }
     }
 
     if (!empty($allowed_roles) && !in_array($_SESSION['role_name'], $allowed_roles)) {

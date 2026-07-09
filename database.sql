@@ -41,11 +41,23 @@ CREATE TABLE `users` (
     `full_name` VARCHAR(100) NOT NULL,
     `email_address` VARCHAR(150) NOT NULL UNIQUE,
     `password` VARCHAR(255) NOT NULL,
+    `force_password_change` BOOLEAN NOT NULL DEFAULT 0,
     `account_status` ENUM('Active', 'Temporary Suspend', 'Permanent Suspend', 'Hold', 'Demo Expired') NOT NULL DEFAULT 'Active',
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
     FOREIGN KEY (`agency_id`) REFERENCES `agencies`(`id`) ON DELETE SET NULL,
     FOREIGN KEY (`role_id`) REFERENCES `roles`(`id`) ON DELETE RESTRICT
+);
+
+CREATE TABLE `managers` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT NOT NULL,
+    `phone` VARCHAR(30),
+    `designation` VARCHAR(100),
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE `sessions` (

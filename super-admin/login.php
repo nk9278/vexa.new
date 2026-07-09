@@ -31,7 +31,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 session_destroy();
                 $error = "Unauthorized access.";
             } else {
-                redirect('/super-admin/dashboard.php');
+                // Check if they need to change password just in case (though Super Admin may not need it, it's safe)
+                $pdo = getDbConnection();
+                $stmt = $pdo->prepare("SELECT force_password_change FROM users WHERE id = :id");
+                $stmt->execute(['id' => $_SESSION['user_id']]);
+                if ($stmt->fetchColumn()) {
+                    redirect('/force-password-change.php');
+                } else {
+                    redirect('/super-admin/dashboard.php');
+                }
             }
         } else {
             $error = $loginResult;
