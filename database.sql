@@ -140,3 +140,59 @@ CREATE TABLE IF NOT EXISTS `project_payments` (
     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS `tasks` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `project_id` INT NOT NULL,
+    `crm_id` INT NOT NULL,
+    `task_name` VARCHAR(255) NOT NULL,
+    `task_type` ENUM('Daily', 'Weekly', 'Monthly', 'Custom') NOT NULL DEFAULT 'Custom',
+    `description` TEXT,
+    `priority` ENUM('Low', 'Medium', 'High') NOT NULL DEFAULT 'Medium',
+    `due_date` DATE NOT NULL,
+    `status` ENUM('Pending', 'In Progress', 'Waiting For Approval', 'Revision Required', 'Completed') DEFAULT 'Pending',
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+    FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`crm_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT
+);
+
+CREATE TABLE IF NOT EXISTS `task_assignments` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `task_id` INT NOT NULL,
+    `employee_id` INT NOT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`task_id`) REFERENCES `tasks`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`employee_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `task_submissions` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `task_id` INT NOT NULL,
+    `employee_id` INT NOT NULL,
+    `submission_text` TEXT,
+    `file_path` VARCHAR(255),
+    `status` ENUM('Pending Review', 'Approved', 'Revision Required') DEFAULT 'Pending Review',
+    `revision_count` INT DEFAULT 0,
+    `reviewed_by` INT DEFAULT NULL,
+    `reviewed_at` TIMESTAMP NULL DEFAULT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (`task_id`) REFERENCES `tasks`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`employee_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`reviewed_by`) REFERENCES `users`(`id`) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS `task_comments` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `task_id` INT NOT NULL,
+    `submission_id` INT DEFAULT NULL,
+    `user_id` INT NOT NULL,
+    `comment_text` TEXT,
+    `voice_note_path` VARCHAR(255),
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`task_id`) REFERENCES `tasks`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`submission_id`) REFERENCES `task_submissions`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+);

@@ -46,6 +46,22 @@
     <a href="/manager/payments.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], 'payment') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
         Payments
     </a>
+<?php elseif (isset($_SESSION['role_name']) && $_SESSION['role_name'] === 'CRM'): ?>
+    <a href="/crm/dashboard.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], 'dashboard.php') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+        Dashboard
+    </a>
+    <a href="/crm/clients.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], 'client') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+        Clients
+    </a>
+    <a href="/crm/projects.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], 'project') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+        Projects
+    </a>
+    <a href="/crm/tasks.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], 'task') !== false && strpos($_SERVER['REQUEST_URI'], 'task-submissions.php') === false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+        Tasks
+    </a>
+    <a href="/crm/notifications.php" class="<?php echo strpos($_SERVER['REQUEST_URI'], 'notification') !== false ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+        Notifications
+    </a>
 <?php else: ?>
     <a href="#" class="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
         Dashboard
