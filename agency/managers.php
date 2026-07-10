@@ -144,6 +144,12 @@ include __DIR__ . '/header.php';
                                             <button type="submit" class="text-green-600 hover:text-green-900 bg-transparent border-none cursor-pointer">Activate</button>
                                         <?php endif; ?>
                                     </form>
+                                    <form method="POST" action="manager-status.php" class="inline ml-3" onsubmit="return confirm('Are you sure you want to delete this manager? This action cannot be undone.');">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
+                                        <input type="hidden" name="id" value="<?php echo $manager['id']; ?>">
+                                        <input type="hidden" name="action" value="delete">
+                                        <button type="submit" class="text-red-600 hover:text-red-900 bg-transparent border-none cursor-pointer">Delete</button>
+                                    </form>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
