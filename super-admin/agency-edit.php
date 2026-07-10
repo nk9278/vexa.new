@@ -36,11 +36,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $error = "Invalid email format.";
         } else {
-            // Check unique email excluding self
+            // Check unique email in agencies excluding self
             $stmt = $pdo->prepare("SELECT id FROM agencies WHERE email = :email AND id != :id");
             $stmt->execute(['email' => $email, 'id' => $agency_id]);
-            if ($stmt->fetch()) {
-                $error = "Email is already in use by another agency.";
+            $agency_exists = $stmt->fetch();
+
+            // Check unique email in users excluding the owner of this agency
+            $stmt2 = $pdo->prepare("SELECT id FROM users WHERE email_address = :email AND !(agency_id = :agency_id AND role_id = :role_id)");
+            $stmt2->execute(['email' => $email, 'agency_id' => $agency_id, 'role_id' => ROLE_AGENCY_OWNER]);
+            $user_exists = $stmt2->fetch();
+
+            if ($agency_exists || $user_exists) {
+                $error = "Email is already in use.";
             } else {
                 try {
                     $pdo->beginTransaction();
@@ -75,8 +82,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         ]);
                     }
 
+                    // Handle User update or creation
+                    $stmt = $pdo->prepare("SELECT id FROM users WHERE agency_id = :agency_id AND role_id = :role_id LIMIT 1");
+                    $stmt->execute(['agency_id' => $agency_id, 'role_id' => ROLE_AGENCY_OWNER]);
+                    $owner_user = $stmt->fetch();
+
+                    if ($owner_user) {
+                        // Update existing user
+                        $stmt = $pdo->prepare("UPDATE users SET full_name = :full_name, email_address = :email WHERE id = :id");
+                        $stmt->execute([
+                            'full_name' => $owner_name,
+                            'email' => $email,
+                            'id' => $owner_user['id']
+                        ]);
+                    } else {
+                        // Create user if missing
+                        $temp_password = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*'), 0, 10);
+                        $hashed_password = password_hash($temp_password, PASSWORD_DEFAULT);
+
+                        $stmt = $pdo->prepare("INSERT INTO users (agency_id, role_id, full_name, email_address, password, force_password_change, account_status) VALUES (:agency_id, :role_id, :full_name, :email, :password, 1, 'Active')");
+                        $stmt->execute([
+                            'agency_id' => $agency_id,
+                            'role_id' => ROLE_AGENCY_OWNER,
+                            'full_name' => $owner_name,
+                            'email' => $email,
+                            'password' => $hashed_password
+                        ]);
+                        $success_suffix = " Temporary Password for new Owner User: <strong>$temp_password</strong>";
+                    }
+
                     $pdo->commit();
-                    $success = "Agency updated successfully.";
+                    $success = "Agency updated successfully." . ($success_suffix ?? '');
                 } catch (Exception $e) {
                     $pdo->rollBack();
                     $error = "Failed to update agency: " . $e->getMessage();
