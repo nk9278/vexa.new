@@ -76,3 +76,210 @@ CREATE TABLE `password_resets` (
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX (`email_address`)
 );
+
+CREATE TABLE IF NOT EXISTS `clients` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `agency_id` INT NOT NULL,
+    `client_name` VARCHAR(100) NOT NULL,
+    `company_name` VARCHAR(100),
+    `contact_person` VARCHAR(100),
+    `email` VARCHAR(150) NOT NULL,
+    `phone` VARCHAR(30) NOT NULL,
+    `gst_number` VARCHAR(50),
+    `address` TEXT,
+    `city` VARCHAR(100),
+    `state` VARCHAR(100),
+    `country` VARCHAR(100),
+    `notes` TEXT,
+    `status` ENUM('Active', 'Inactive') DEFAULT 'Active',
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+    FOREIGN KEY (`agency_id`) REFERENCES `agencies`(`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `projects` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `agency_id` INT NOT NULL,
+    `client_id` INT NOT NULL,
+    `project_name` VARCHAR(255) NOT NULL,
+    `project_type` VARCHAR(100) NOT NULL,
+    `description` TEXT,
+    `start_date` DATE,
+    `expected_completion_date` DATE,
+    `status` ENUM('Running', 'Pending', 'Completed', 'On Hold', 'Cancelled') DEFAULT 'Pending',
+    `priority` ENUM('Low', 'Medium', 'High') DEFAULT 'Medium',
+    `crm_id` INT NOT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+    FOREIGN KEY (`agency_id`) REFERENCES `agencies`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`client_id`) REFERENCES `clients`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`crm_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT
+);
+
+CREATE TABLE IF NOT EXISTS `project_assignments` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `project_id` INT NOT NULL,
+    `employee_id` INT NOT NULL,
+    `role` VARCHAR(100),
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`employee_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `project_payments` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `project_id` INT NOT NULL UNIQUE,
+    `project_amount` DECIMAL(12,2) DEFAULT 0.00,
+    `received_amount` DECIMAL(12,2) DEFAULT 0.00,
+    `pending_amount` DECIMAL(12,2) DEFAULT 0.00,
+    `payment_status` ENUM('Pending', 'Partial', 'Completed') DEFAULT 'Pending',
+    `last_payment_date` DATE,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `tasks` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `project_id` INT NOT NULL,
+    `crm_id` INT NOT NULL,
+    `task_name` VARCHAR(255) NOT NULL,
+    `task_type` ENUM('Daily', 'Weekly', 'Monthly', 'Custom') NOT NULL DEFAULT 'Custom',
+    `description` TEXT,
+    `priority` ENUM('Low', 'Medium', 'High') NOT NULL DEFAULT 'Medium',
+    `due_date` DATE NOT NULL,
+    `status` ENUM('Pending', 'In Progress', 'Waiting For Approval', 'Revision Required', 'Completed') DEFAULT 'Pending',
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+    FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`crm_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT
+);
+
+CREATE TABLE IF NOT EXISTS `task_assignments` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `task_id` INT NOT NULL,
+    `employee_id` INT NOT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`task_id`) REFERENCES `tasks`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`employee_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `task_submissions` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `task_id` INT NOT NULL,
+    `employee_id` INT NOT NULL,
+    `submission_text` TEXT,
+    `file_path` VARCHAR(255),
+    `status` ENUM('Pending Review', 'Approved', 'Revision Required') DEFAULT 'Pending Review',
+    `revision_count` INT DEFAULT 0,
+    `reviewed_by` INT DEFAULT NULL,
+    `reviewed_at` TIMESTAMP NULL DEFAULT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (`task_id`) REFERENCES `tasks`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`employee_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`reviewed_by`) REFERENCES `users`(`id`) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS `task_comments` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `task_id` INT NOT NULL,
+    `submission_id` INT DEFAULT NULL,
+    `user_id` INT NOT NULL,
+    `comment_text` TEXT,
+    `voice_note_path` VARCHAR(255),
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`task_id`) REFERENCES `tasks`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`submission_id`) REFERENCES `task_submissions`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `notifications` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT NOT NULL,
+    `title` VARCHAR(255) NOT NULL,
+    `message` TEXT NOT NULL,
+    `link` VARCHAR(255) DEFAULT NULL,
+    `status` ENUM('Unread', 'Read', 'Archived') DEFAULT 'Unread',
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `activity_logs` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `agency_id` INT NOT NULL,
+    `project_id` INT DEFAULT NULL,
+    `client_id` INT DEFAULT NULL,
+    `user_id` INT NOT NULL,
+    `action` VARCHAR(255) NOT NULL,
+    `details` TEXT,
+    `voice_note_path` VARCHAR(255) DEFAULT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`agency_id`) REFERENCES `agencies`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`client_id`) REFERENCES `clients`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `audit_logs` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `agency_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `role_name` VARCHAR(50) NOT NULL,
+    `action` VARCHAR(255) NOT NULL,
+    `project_id` INT DEFAULT NULL,
+    `client_id` INT DEFAULT NULL,
+    `ip_address` VARCHAR(45) DEFAULT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`agency_id`) REFERENCES `agencies`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`client_id`) REFERENCES `clients`(`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `google_drive_accounts` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `agency_id` INT NOT NULL UNIQUE,
+    `access_token` TEXT NOT NULL,
+    `refresh_token` TEXT NOT NULL,
+    `token_expires_at` INT NOT NULL,
+    `email` VARCHAR(150),
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (`agency_id`) REFERENCES `agencies`(`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `google_drive_folders` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `agency_id` INT NOT NULL,
+    `entity_type` ENUM('Agency', 'Client', 'Project', 'Category') NOT NULL,
+    `entity_id` INT DEFAULT NULL,
+    `folder_name` VARCHAR(255) NOT NULL,
+    `drive_folder_id` VARCHAR(255) NOT NULL,
+    `parent_folder_id` VARCHAR(255) DEFAULT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`agency_id`) REFERENCES `agencies`(`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `google_drive_files` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `agency_id` INT NOT NULL,
+    `project_id` INT NOT NULL,
+    `uploader_id` INT NOT NULL,
+    `folder_id` INT DEFAULT NULL,
+    `file_name` VARCHAR(255) NOT NULL,
+    `drive_file_id` VARCHAR(255) NOT NULL,
+    `drive_link` TEXT,
+    `file_size` BIGINT DEFAULT 0,
+    `file_type` VARCHAR(50),
+    `status` ENUM('Active', 'Deleted') DEFAULT 'Active',
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (`agency_id`) REFERENCES `agencies`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`uploader_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`folder_id`) REFERENCES `google_drive_folders`(`id`) ON DELETE SET NULL
+);
