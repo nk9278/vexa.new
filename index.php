@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="VEXA is a comprehensive SaaS Digital Marketing Management Software for modern agencies. Streamline projects, clients, and teams all in one place.">
+    <meta name="description" content="<?php echo APP_NAME; ?> is a comprehensive SaaS Digital Marketing Management Software for modern agencies. Streamline projects, clients, and teams all in one place.">
 
     <!-- Open Graph Tags -->
     <meta property="og:title" content="<?php echo APP_NAME; ?> - Digital Marketing Management Software">
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
     <!-- Twitter Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="<?php echo APP_NAME; ?> - Agency Management">
-    <meta name="twitter:description" content="Streamline your digital marketing agency with VEXA.">
+    <meta name="twitter:description" content="Streamline your digital marketing agency with <?php echo APP_NAME; ?>.">
     <meta name="twitter:image" content="/assets/twitter-image.jpg">
 
     <title><?php echo APP_NAME; ?> - Digital Marketing Management Software</title>
@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
                     Manage your Digital Agency <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500">without the chaos.</span>
                 </h1>
                 <p class="mt-4 max-w-2xl mx-auto text-xl text-gray-600 mb-10">
-                    VEXA brings your clients, projects, tasks, file hosting, and team collaboration into one unified, intelligent workspace.
+                    <?php echo APP_NAME; ?> brings your clients, projects, tasks, file hosting, and team collaboration into one unified, intelligent workspace.
                 </p>
                 <div class="flex justify-center space-x-4">
                     <a href="#contact" class="bg-indigo-600 text-white px-8 py-4 rounded-full text-lg hover:bg-indigo-700 transition shadow-lg font-bold">Start Free Trial</a>
@@ -168,10 +168,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
             </div>
         </section>
 
-        <!-- Why Choose VEXA -->
+        <!-- Why Choose <?php echo APP_NAME; ?> -->
         <section class="py-20 bg-indigo-900 text-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <h2 class="text-3xl font-extrabold tracking-tight sm:text-4xl mb-8">Why Choose VEXA?</h2>
+                <h2 class="text-3xl font-extrabold tracking-tight sm:text-4xl mb-8">Why Choose <?php echo APP_NAME; ?>?</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
                     <div>
                         <h4 class="text-xl font-bold mb-2">Centralized Hub</h4>
@@ -242,16 +242,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
                 <h2 class="text-3xl font-extrabold text-center tracking-tight text-gray-900 sm:text-4xl mb-12">Frequently Asked Questions</h2>
                 <div class="space-y-6">
                     <div class="bg-gray-50 p-6 rounded-xl border border-gray-100">
-                        <h4 class="text-lg font-bold text-gray-900 mb-2">Can clients log into VEXA?</h4>
-                        <p class="text-gray-600">Currently, VEXA is designed for internal agency use to manage work. Client portals will be considered in future roadmaps.</p>
+                        <h4 class="text-lg font-bold text-gray-900 mb-2">Can clients log into <?php echo APP_NAME; ?>?</h4>
+                        <p class="text-gray-600">Currently, <?php echo APP_NAME; ?> is designed for internal agency use to manage work. Client portals will be considered in future roadmaps.</p>
                     </div>
                     <div class="bg-gray-50 p-6 rounded-xl border border-gray-100">
                         <h4 class="text-lg font-bold text-gray-900 mb-2">How does the Google Drive integration work?</h4>
-                        <p class="text-gray-600">The Agency Owner connects their central Drive account via OAuth. VEXA will automatically create organized folders and upload employee submissions directly to your Drive.</p>
+                        <p class="text-gray-600">The Agency Owner connects their central Drive account via OAuth. <?php echo APP_NAME; ?> will automatically create organized folders and upload employee submissions directly to your Drive.</p>
                     </div>
                     <div class="bg-gray-50 p-6 rounded-xl border border-gray-100">
                         <h4 class="text-lg font-bold text-gray-900 mb-2">Is the platform secure?</h4>
-                        <p class="text-gray-600">Yes, VEXA utilizes industry-standard security measures including strict PDO parameters, CSRF tokens on all state-changing endpoints, and robust session validation.</p>
+                        <p class="text-gray-600">Yes, <?php echo APP_NAME; ?> utilizes industry-standard security measures including strict PDO parameters, CSRF tokens on all state-changing endpoints, and robust session validation.</p>
                     </div>
                 </div>
             </div>

@@ -107,7 +107,7 @@ include __DIR__ . '/header.php';
                         <path d="M7.71 3.5L1.15 15l3.43 6 6.55-11.5M9.73 3.5h13.12l3.43 6H13.15M13.56 16.5l3.43 6H24l-3.43-6"/>
                     </svg>
                     <h3 class="text-lg font-medium text-gray-900 mb-2">Connect Google Drive</h3>
-                    <p class="text-sm text-gray-500 mb-6 max-w-lg mx-auto">Authorize VEXA to automatically organize and store your agency's files, photos, videos, and documents directly into your Google Drive.</p>
+                    <p class="text-sm text-gray-500 mb-6 max-w-lg mx-auto">Authorize <?php echo APP_NAME; ?> to automatically organize and store your agency's files, photos, videos, and documents directly into your Google Drive.</p>
 
                     <a href="/api/google-drive-auth.php" class="inline-flex items-center bg-indigo-600 text-white px-8 py-3 rounded-full hover:bg-indigo-700 transition shadow-sm font-medium text-lg">
                         <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M7.71 3.5L1.15 15l3.43 6 6.55-11.5M9.73 3.5h13.12l3.43 6H13.15M13.56 16.5l3.43 6H24l-3.43-6"/></svg>
