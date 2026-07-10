@@ -5,9 +5,7 @@ require_once __DIR__ . '/../config/auth.php';
 require_once __DIR__ . '/../config/database.php';
 
 // All logged-in roles can access notifications
-if (!isset($_SESSION['user_id'])) {
-    redirect('/login.php');
-}
+checkAuth();
 
 $pdo = getDbConnection();
 $user_id = $_SESSION['user_id'];

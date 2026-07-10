@@ -54,8 +54,17 @@ $stmt = $pdo->prepare("SELECT COUNT(DISTINCT p.crm_id) FROM projects p WHERE p.a
 $stmt->execute(['agency_id' => $agency_id]);
 $total_crm_assigned = $stmt->fetchColumn();
 
-// Today's Tasks - Hardcoded to 0 for now as per instructions
-$todays_tasks = 0;
+// Today's Tasks
+$stmt = $pdo->prepare("
+    SELECT COUNT(t.id)
+    FROM tasks t
+    JOIN projects p ON t.project_id = p.id
+    WHERE p.agency_id = :agency_id
+    AND DATE(t.due_date) = CURDATE()
+    AND t.deleted_at IS NULL
+");
+$stmt->execute(['agency_id' => $agency_id]);
+$todays_tasks = $stmt->fetchColumn();
 
 include __DIR__ . '/header.php';
 ?>

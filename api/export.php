@@ -4,9 +4,7 @@ require_once __DIR__ . '/../config/session.php';
 require_once __DIR__ . '/../config/auth.php';
 require_once __DIR__ . '/../config/database.php';
 
-if (!isset($_SESSION['user_id'])) {
-    die("Unauthorized");
-}
+checkAuth(); // Allow any logged in user, internal logic handles scoping
 
 $pdo = getDbConnection();
 $agency_id = $_SESSION['agency_id'];

@@ -5,9 +5,7 @@ require_once __DIR__ . '/../config/auth.php';
 require_once __DIR__ . '/../config/database.php';
 
 // Disallow external unauthorized access
-if (!isset($_SESSION['user_id'])) {
-    redirect('/login.php');
-}
+checkAuth();
 
 $pdo = getDbConnection();
 $agency_id = $_SESSION['agency_id'];
@@ -21,17 +19,24 @@ $score_label = '';
 
 // Date Filtering for reports
 $date_filter = $_GET['date_range'] ?? 'All';
-$date_sql = "";
+
+// We define aliased date conditions for use in complex joins
+$date_sql_agency = "";
+$date_sql_tasks = "";
 $date_params = [];
 
 if ($date_filter === 'Today') {
-    $date_sql = " AND DATE(created_at) = CURDATE() ";
+    $date_sql_agency = " AND DATE(created_at) = CURDATE() ";
+    $date_sql_tasks = " AND DATE(t.created_at) = CURDATE() ";
 } elseif ($date_filter === 'This Week') {
-    $date_sql = " AND YEARWEEK(created_at, 1) = YEARWEEK(CURDATE(), 1) ";
+    $date_sql_agency = " AND YEARWEEK(created_at, 1) = YEARWEEK(CURDATE(), 1) ";
+    $date_sql_tasks = " AND YEARWEEK(t.created_at, 1) = YEARWEEK(CURDATE(), 1) ";
 } elseif ($date_filter === 'This Month') {
-    $date_sql = " AND MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE()) ";
+    $date_sql_agency = " AND MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE()) ";
+    $date_sql_tasks = " AND MONTH(t.created_at) = MONTH(CURDATE()) AND YEAR(t.created_at) = YEAR(CURDATE()) ";
 } elseif ($date_filter === 'This Year') {
-    $date_sql = " AND YEAR(created_at) = YEAR(CURDATE()) ";
+    $date_sql_agency = " AND YEAR(created_at) = YEAR(CURDATE()) ";
+    $date_sql_tasks = " AND YEAR(t.created_at) = YEAR(CURDATE()) ";
 }
 
 // Scope Data by Role
@@ -40,15 +45,15 @@ if ($role_name === 'Agency Owner' || $role_name === 'Super Admin') {
     $score = calculateAgencyProductivity($agency_id);
     $score_label = 'Agency Productivity';
 
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM clients WHERE agency_id = :aid AND deleted_at IS NULL $date_sql");
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM clients WHERE agency_id = :aid AND deleted_at IS NULL $date_sql_agency");
     $stmt->execute(['aid' => $agency_id]);
     $kpis['Total Clients'] = $stmt->fetchColumn();
 
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM projects WHERE agency_id = :aid AND deleted_at IS NULL $date_sql");
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM projects WHERE agency_id = :aid AND deleted_at IS NULL $date_sql_agency");
     $stmt->execute(['aid' => $agency_id]);
     $kpis['Total Projects'] = $stmt->fetchColumn();
 
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM projects WHERE agency_id = :aid AND status = 'Completed' AND deleted_at IS NULL $date_sql");
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM projects WHERE agency_id = :aid AND status = 'Completed' AND deleted_at IS NULL $date_sql_agency");
     $stmt->execute(['aid' => $agency_id]);
     $kpis['Completed Projects'] = $stmt->fetchColumn();
 
@@ -61,15 +66,15 @@ if ($role_name === 'Agency Owner' || $role_name === 'Super Admin') {
     $score = calculateManagerProductivity($agency_id);
     $score_label = 'Manager Productivity';
 
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM clients WHERE agency_id = :aid AND deleted_at IS NULL $date_sql");
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM clients WHERE agency_id = :aid AND deleted_at IS NULL $date_sql_agency");
     $stmt->execute(['aid' => $agency_id]);
     $kpis['Clients Managed'] = $stmt->fetchColumn();
 
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM projects WHERE agency_id = :aid AND deleted_at IS NULL $date_sql");
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM projects WHERE agency_id = :aid AND deleted_at IS NULL $date_sql_agency");
     $stmt->execute(['aid' => $agency_id]);
     $kpis['Projects Managed'] = $stmt->fetchColumn();
 
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM projects WHERE agency_id = :aid AND status = 'Completed' AND deleted_at IS NULL $date_sql");
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM projects WHERE agency_id = :aid AND status = 'Completed' AND deleted_at IS NULL $date_sql_agency");
     $stmt->execute(['aid' => $agency_id]);
     $kpis['Projects Completed'] = $stmt->fetchColumn();
 
@@ -82,19 +87,19 @@ if ($role_name === 'Agency Owner' || $role_name === 'Super Admin') {
     $score = calculateCRMProductivity($user_id);
     $score_label = 'CRM Productivity';
 
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM projects WHERE crm_id = :uid AND deleted_at IS NULL $date_sql");
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM projects WHERE crm_id = :uid AND deleted_at IS NULL $date_sql_agency");
     $stmt->execute(['uid' => $user_id]);
     $kpis['Projects Assigned'] = $stmt->fetchColumn();
 
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM tasks WHERE crm_id = :uid AND deleted_at IS NULL $date_sql");
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM tasks WHERE crm_id = :uid AND deleted_at IS NULL $date_sql_agency");
     $stmt->execute(['uid' => $user_id]);
     $kpis['Tasks Created'] = $stmt->fetchColumn();
 
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM tasks WHERE crm_id = :uid AND status = 'Completed' AND deleted_at IS NULL $date_sql");
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM tasks WHERE crm_id = :uid AND status = 'Completed' AND deleted_at IS NULL $date_sql_agency");
     $stmt->execute(['uid' => $user_id]);
     $kpis['Tasks Approved'] = $stmt->fetchColumn();
 
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM task_submissions ts JOIN tasks t ON ts.task_id = t.id WHERE t.crm_id = :uid AND ts.status = 'Revision Required' $date_sql");
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM task_submissions ts JOIN tasks t ON ts.task_id = t.id WHERE t.crm_id = :uid AND ts.status = 'Revision Required' $date_sql_tasks");
     $stmt->execute(['uid' => $user_id]);
     $kpis['Revision Requests'] = $stmt->fetchColumn();
 
@@ -103,15 +108,15 @@ if ($role_name === 'Agency Owner' || $role_name === 'Super Admin') {
     $score = calculateEmployeeProductivity($user_id);
     $score_label = 'Employee Productivity';
 
-    $stmt = $pdo->prepare("SELECT COUNT(t.id) FROM tasks t JOIN task_assignments ta ON t.id = ta.task_id WHERE ta.employee_id = :uid AND t.deleted_at IS NULL $date_sql");
+    $stmt = $pdo->prepare("SELECT COUNT(t.id) FROM tasks t JOIN task_assignments ta ON t.id = ta.task_id WHERE ta.employee_id = :uid AND t.deleted_at IS NULL $date_sql_tasks");
     $stmt->execute(['uid' => $user_id]);
     $kpis['Assigned Tasks'] = $stmt->fetchColumn();
 
-    $stmt = $pdo->prepare("SELECT COUNT(t.id) FROM tasks t JOIN task_assignments ta ON t.id = ta.task_id WHERE ta.employee_id = :uid AND t.status = 'Completed' AND t.deleted_at IS NULL $date_sql");
+    $stmt = $pdo->prepare("SELECT COUNT(t.id) FROM tasks t JOIN task_assignments ta ON t.id = ta.task_id WHERE ta.employee_id = :uid AND t.status = 'Completed' AND t.deleted_at IS NULL $date_sql_tasks");
     $stmt->execute(['uid' => $user_id]);
     $kpis['Completed Tasks'] = $stmt->fetchColumn();
 
-    $stmt = $pdo->prepare("SELECT COUNT(t.id) FROM tasks t JOIN task_assignments ta ON t.id = ta.task_id WHERE ta.employee_id = :uid AND t.status = 'Revision Required' AND t.deleted_at IS NULL $date_sql");
+    $stmt = $pdo->prepare("SELECT COUNT(t.id) FROM tasks t JOIN task_assignments ta ON t.id = ta.task_id WHERE ta.employee_id = :uid AND t.status = 'Revision Required' AND t.deleted_at IS NULL $date_sql_tasks");
     $stmt->execute(['uid' => $user_id]);
     $kpis['Revision Requests'] = $stmt->fetchColumn();
 

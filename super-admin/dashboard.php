@@ -23,7 +23,8 @@ $stats = [
 ];
 
 // Get status counts
-$stmt = $pdo->query("SELECT status, COUNT(*) as count FROM agencies WHERE deleted_at IS NULL GROUP BY status");
+$stmt = $pdo->prepare("SELECT status, COUNT(*) as count FROM agencies WHERE deleted_at IS NULL GROUP BY status");
+$stmt->execute();
 while ($row = $stmt->fetch()) {
     $status = strtolower($row['status']);
     if (isset($stats[$status])) {
@@ -36,14 +37,17 @@ while ($row = $stmt->fetch()) {
 
 // Get Revenue
 // Note: For simplicity, Total Revenue is sum of all prices, Monthly is sum of prices starting this month
-$stmt = $pdo->query("SELECT SUM(price) as total_rev FROM agency_subscriptions JOIN agencies ON agency_subscriptions.agency_id = agencies.id WHERE agencies.deleted_at IS NULL");
+$stmt = $pdo->prepare("SELECT SUM(price) as total_rev FROM agency_subscriptions JOIN agencies ON agency_subscriptions.agency_id = agencies.id WHERE agencies.deleted_at IS NULL");
+$stmt->execute();
 $total_revenue = $stmt->fetchColumn() ?: 0;
 
-$stmt = $pdo->query("SELECT SUM(price) as monthly_rev FROM agency_subscriptions JOIN agencies ON agency_subscriptions.agency_id = agencies.id WHERE agencies.deleted_at IS NULL AND MONTH(start_date) = MONTH(CURRENT_DATE()) AND YEAR(start_date) = YEAR(CURRENT_DATE())");
+$stmt = $pdo->prepare("SELECT SUM(price) as monthly_rev FROM agency_subscriptions JOIN agencies ON agency_subscriptions.agency_id = agencies.id WHERE agencies.deleted_at IS NULL AND MONTH(start_date) = MONTH(CURRENT_DATE()) AND YEAR(start_date) = YEAR(CURRENT_DATE())");
+$stmt->execute();
 $monthly_revenue = $stmt->fetchColumn() ?: 0;
 
 // Get Expiring Plans (next 30 days)
-$stmt = $pdo->query("SELECT COUNT(*) as expiring FROM agency_subscriptions JOIN agencies ON agency_subscriptions.agency_id = agencies.id WHERE agencies.deleted_at IS NULL AND end_date BETWEEN CURRENT_DATE() AND DATE_ADD(CURRENT_DATE(), INTERVAL 30 DAY)");
+$stmt = $pdo->prepare("SELECT COUNT(*) as expiring FROM agency_subscriptions JOIN agencies ON agency_subscriptions.agency_id = agencies.id WHERE agencies.deleted_at IS NULL AND end_date BETWEEN CURRENT_DATE() AND DATE_ADD(CURRENT_DATE(), INTERVAL 30 DAY)");
+$stmt->execute();
 $expiring_plans = $stmt->fetchColumn() ?: 0;
 ?>
 

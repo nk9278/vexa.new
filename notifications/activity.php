@@ -5,9 +5,7 @@ require_once __DIR__ . '/../config/auth.php';
 require_once __DIR__ . '/../config/database.php';
 
 // Requires auth
-if (!isset($_SESSION['user_id'])) {
-    redirect('/login.php');
-}
+checkAuth();
 
 $pdo = getDbConnection();
 $agency_id = $_SESSION['agency_id'];

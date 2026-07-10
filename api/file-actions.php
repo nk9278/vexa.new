@@ -6,9 +6,7 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/notification_functions.php';
 
 // Requires auth for everyone
-if (!isset($_SESSION['user_id'])) {
-    redirect('/login.php');
-}
+checkAuth();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect('/files/index.php');
