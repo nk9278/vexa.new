@@ -35,11 +35,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $error = "Invalid email format.";
         } else {
-            // Check unique email
+            // Check unique email in agencies
             $stmt = $pdo->prepare("SELECT id FROM agencies WHERE email = :email");
             $stmt->execute(['email' => $email]);
-            if ($stmt->fetch()) {
-                $error = "Email is already in use by another agency.";
+            $agency_exists = $stmt->fetch();
+
+            // Check unique email in users
+            $stmt2 = $pdo->prepare("SELECT id FROM users WHERE email_address = :email");
+            $stmt2->execute(['email' => $email]);
+            $user_exists = $stmt2->fetch();
+
+            if ($agency_exists || $user_exists) {
+                $error = "Email is already in use.";
             } else {
                 try {
                     $pdo->beginTransaction();
@@ -67,8 +74,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'price' => $price
                     ]);
 
+                    // Generate a random temporary password
+                    $temp_password = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*'), 0, 10);
+                    $hashed_password = password_hash($temp_password, PASSWORD_DEFAULT);
+
+                    // Insert Agency Owner User
+                    $stmt = $pdo->prepare("INSERT INTO users (agency_id, role_id, full_name, email_address, password, force_password_change, account_status) VALUES (:agency_id, :role_id, :full_name, :email, :password, 1, 'Active')");
+                    $stmt->execute([
+                        'agency_id' => $agency_id,
+                        'role_id' => ROLE_AGENCY_OWNER,
+                        'full_name' => $owner_name,
+                        'email' => $email,
+                        'password' => $hashed_password
+                    ]);
+
                     $pdo->commit();
-                    $success = "Agency added successfully.";
+                    $success = "Agency added successfully. Temporary Password: <strong>$temp_password</strong> (Please copy this, it will not be shown again.)";
                     // Optionally redirect to agencies list
                     // redirect('/super-admin/agencies.php');
                 } catch (Exception $e) {
