@@ -76,15 +76,15 @@ include __DIR__ . '/header.php';
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
             <p class="text-sm text-gray-500 font-medium">Total Project Value</p>
-            <p class="text-2xl font-bold text-gray-900">$<?php echo number_format($totals['total_amount'] ?? 0, 2); ?></p>
+            <p class="text-2xl font-bold text-gray-900">₹<?php echo number_format($totals['total_amount'] ?? 0, 2); ?></p>
         </div>
         <div class="bg-green-50 p-4 rounded-xl shadow-sm border border-green-200">
             <p class="text-sm text-green-600 font-medium">Total Received</p>
-            <p class="text-2xl font-bold text-green-700">$<?php echo number_format($totals['total_received'] ?? 0, 2); ?></p>
+            <p class="text-2xl font-bold text-green-700">₹<?php echo number_format($totals['total_received'] ?? 0, 2); ?></p>
         </div>
         <div class="bg-red-50 p-4 rounded-xl shadow-sm border border-red-200">
             <p class="text-sm text-red-600 font-medium">Total Pending</p>
-            <p class="text-2xl font-bold text-red-700">$<?php echo number_format($totals['total_pending'] ?? 0, 2); ?></p>
+            <p class="text-2xl font-bold text-red-700">₹<?php echo number_format($totals['total_pending'] ?? 0, 2); ?></p>
         </div>
     </div>
 
@@ -125,13 +125,13 @@ include __DIR__ . '/header.php';
                                 <div class="text-xs text-gray-500"><?php echo htmlspecialchars($pay['client_name']); ?></div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
-                                $<?php echo number_format($pay['project_amount'], 2); ?>
+                                ₹<?php echo number_format($pay['project_amount'], 2); ?>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">
-                                $<?php echo number_format($pay['received_amount'], 2); ?>
+                                ₹<?php echo number_format($pay['received_amount'], 2); ?>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-medium">
-                                $<?php echo number_format($pay['pending_amount'], 2); ?>
+                                ₹<?php echo number_format($pay['pending_amount'], 2); ?>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full

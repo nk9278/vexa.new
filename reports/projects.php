@@ -73,7 +73,7 @@ include __DIR__ . '/../includes/header.php';
                 </select>
             </form>
 
-            <a href="/api/export.php?report=projects&date=<?php echo urlencode($date_filter); ?>" class="bg-indigo-600 text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition shadow-sm text-sm font-medium flex items-center">
+            <a href="<?php echo BASE_URL; ?>/api/export.php?report=projects&date=<?php echo urlencode($date_filter); ?>" class="bg-indigo-600 text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition shadow-sm text-sm font-medium flex items-center">
                 CSV
             </a>
             <button onclick="exportToPDF()" class="bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-700 transition shadow-sm text-sm font-medium flex items-center">

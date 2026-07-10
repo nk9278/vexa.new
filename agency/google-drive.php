@@ -84,7 +84,7 @@ include __DIR__ . '/header.php';
                     <p class="text-sm text-gray-500 mb-4">If you disconnect, new files uploaded by your team will be stored locally on the server instead of Google Drive until you reconnect.</p>
 
                     <div class="flex space-x-4">
-                        <a href="/api/google-drive-auth.php?action=reconnect" class="bg-white border border-gray-300 text-gray-700 px-6 py-2 rounded-full hover:bg-gray-50 transition shadow-sm font-medium">Reconnect Account</a>
+                        <a href="<?php echo BASE_URL; ?>/api/google-drive-auth.php?action=reconnect" class="bg-white border border-gray-300 text-gray-700 px-6 py-2 rounded-full hover:bg-gray-50 transition shadow-sm font-medium">Reconnect Account</a>
 
                         <form method="POST" action="google-drive.php" onsubmit="return confirm('Are you sure you want to disconnect Google Drive?');">
                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
@@ -109,7 +109,7 @@ include __DIR__ . '/header.php';
                     <h3 class="text-lg font-medium text-gray-900 mb-2">Connect Google Drive</h3>
                     <p class="text-sm text-gray-500 mb-6 max-w-lg mx-auto">Authorize <?php echo APP_NAME; ?> to automatically organize and store your agency's files, photos, videos, and documents directly into your Google Drive.</p>
 
-                    <a href="/api/google-drive-auth.php" class="inline-flex items-center bg-indigo-600 text-white px-8 py-3 rounded-full hover:bg-indigo-700 transition shadow-sm font-medium text-lg">
+                    <a href="<?php echo BASE_URL; ?>/api/google-drive-auth.php" class="inline-flex items-center bg-indigo-600 text-white px-8 py-3 rounded-full hover:bg-indigo-700 transition shadow-sm font-medium text-lg">
                         <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M7.71 3.5L1.15 15l3.43 6 6.55-11.5M9.73 3.5h13.12l3.43 6H13.15M13.56 16.5l3.43 6H24l-3.43-6"/></svg>
                         Connect Google Drive
                     </a>

@@ -99,7 +99,7 @@ include __DIR__ . '/header.php';
                     </div>
                     <div class="sm:col-span-1">
                         <dt class="text-sm font-medium text-gray-500">Created Date</dt>
-                        <dd class="mt-1 text-sm text-gray-900"><?php echo date('M d, Y', strtotime($agency['created_at'])); ?></dd>
+                        <dd class="mt-1 text-sm text-gray-900"><?php echo date('d-m-Y', strtotime($agency['created_at'])); ?></dd>
                     </div>
                     <div class="sm:col-span-2">
                         <dt class="text-sm font-medium text-gray-500">Address</dt>
@@ -135,11 +135,11 @@ include __DIR__ . '/header.php';
                     <dl class="grid grid-cols-2 gap-x-4 gap-y-4">
                         <div class="col-span-1">
                             <dt class="text-xs font-medium text-gray-500 uppercase">Start Date</dt>
-                            <dd class="mt-1 text-sm text-gray-900"><?php echo date('M d, Y', strtotime($current_subscription['start_date'])); ?></dd>
+                            <dd class="mt-1 text-sm text-gray-900"><?php echo date('d-m-Y', strtotime($current_subscription['start_date'])); ?></dd>
                         </div>
                         <div class="col-span-1">
                             <dt class="text-xs font-medium text-gray-500 uppercase">End Date</dt>
-                            <dd class="mt-1 text-sm text-gray-900"><?php echo date('M d, Y', strtotime($current_subscription['end_date'])); ?></dd>
+                            <dd class="mt-1 text-sm text-gray-900"><?php echo date('d-m-Y', strtotime($current_subscription['end_date'])); ?></dd>
                         </div>
                     </dl>
                 <?php else: ?>

@@ -106,7 +106,7 @@ include __DIR__ . '/../includes/header.php';
     <div class="flex flex-col sm:flex-row justify-between items-center mb-4">
         <h1 class="text-3xl font-bold leading-tight text-gray-900">File Browser</h1>
         <?php if ($role_name === 'Agency Owner'): ?>
-            <a href="/agency/google-drive.php" class="mt-4 sm:mt-0 bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full hover:bg-gray-50 transition shadow-sm text-sm font-medium">Manage Drive Connection</a>
+            <a href="<?php echo BASE_URL; ?>/agency/google-drive.php" class="mt-4 sm:mt-0 bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full hover:bg-gray-50 transition shadow-sm text-sm font-medium">Manage Drive Connection</a>
         <?php endif; ?>
     </div>
 </div>
@@ -123,7 +123,7 @@ include __DIR__ . '/../includes/header.php';
 <?php endif; ?>
 
 <div class="px-4 sm:px-6 mb-6">
-    <form method="GET" action="/files/index.php" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4">
+    <form method="GET" action="<?php echo BASE_URL; ?>/files/index.php" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4">
         <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search file names..." class="md:col-span-2 px-4 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500 outline-none">
 
         <select name="project_id" class="px-4 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white">
@@ -152,7 +152,7 @@ include __DIR__ . '/../includes/header.php';
         <div class="flex space-x-2">
             <button type="submit" class="w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition font-medium">Filter</button>
             <?php if($search || $project_filter || $client_filter || $type_filter): ?>
-                <a href="/files/index.php" class="w-full bg-red-50 text-red-600 px-4 py-2 rounded-lg hover:bg-red-100 transition font-medium text-center flex items-center justify-center">Clear</a>
+                <a href="<?php echo BASE_URL; ?>/files/index.php" class="w-full bg-red-50 text-red-600 px-4 py-2 rounded-lg hover:bg-red-100 transition font-medium text-center flex items-center justify-center">Clear</a>
             <?php endif; ?>
         </div>
     </form>
@@ -192,7 +192,7 @@ include __DIR__ . '/../includes/header.php';
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm text-gray-900"><?php echo htmlspecialchars($file['uploader_name']); ?></div>
-                                <div class="text-xs text-gray-500"><?php echo date('M d, Y', strtotime($file['created_at'])); ?></div>
+                                <div class="text-xs text-gray-500"><?php echo date('d-m-Y', strtotime($file['created_at'])); ?></div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                                 <?php if ($file['drive_link']): ?>
@@ -205,7 +205,7 @@ include __DIR__ . '/../includes/header.php';
                                 <button onclick="document.getElementById('rename-form-<?php echo $file['id']; ?>').classList.toggle('hidden')" class="text-blue-600 hover:text-blue-900">Rename</button>
 
                                 <!-- Delete Form inline -->
-                                <form method="POST" action="/api/file-actions.php" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this file?');">
+                                <form method="POST" action="<?php echo BASE_URL; ?>/api/file-actions.php" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this file?');">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
                                     <input type="hidden" name="action" value="delete">
                                     <input type="hidden" name="file_id" value="<?php echo $file['id']; ?>">
@@ -214,7 +214,7 @@ include __DIR__ . '/../includes/header.php';
 
                                 <!-- Hidden Rename Modal/Row -->
                                 <div id="rename-form-<?php echo $file['id']; ?>" class="hidden mt-2 p-2 bg-white border border-gray-200 rounded shadow-lg absolute right-6 z-10">
-                                    <form method="POST" action="/api/file-actions.php" class="flex items-center space-x-2">
+                                    <form method="POST" action="<?php echo BASE_URL; ?>/api/file-actions.php" class="flex items-center space-x-2">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
                                         <input type="hidden" name="action" value="rename">
                                         <input type="hidden" name="file_id" value="<?php echo $file['id']; ?>">

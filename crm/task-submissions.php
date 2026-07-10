@@ -75,7 +75,7 @@ include __DIR__ . '/header.php';
                                 <div class="text-sm font-medium text-gray-900"><?php echo htmlspecialchars($sub['employee_name']); ?></div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <?php echo date('M d, Y h:i A', strtotime($sub['created_at'])); ?>
+                                <?php echo date('d-m-Y h:i A', strtotime($sub['created_at'])); ?>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full

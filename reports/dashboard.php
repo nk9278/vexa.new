@@ -59,7 +59,7 @@ if ($role_name === 'Agency Owner' || $role_name === 'Super Admin') {
 
     $stmt = $pdo->prepare("SELECT SUM(project_amount) FROM project_payments pp JOIN projects p ON pp.project_id = p.id WHERE p.agency_id = :aid AND p.deleted_at IS NULL");
     $stmt->execute(['aid' => $agency_id]);
-    $kpis['Total Revenue'] = '$' . number_format($stmt->fetchColumn() ?: 0, 2);
+    $kpis['Total Revenue'] = '₹' . number_format($stmt->fetchColumn() ?: 0, 2);
 
 } elseif ($role_name === 'Manager') {
     // Manager Reports

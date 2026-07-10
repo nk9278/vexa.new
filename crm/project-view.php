@@ -232,17 +232,17 @@ include __DIR__ . '/header.php';
 
                 <div class="bg-gray-50 p-4 rounded-lg flex justify-between items-center border border-gray-100">
                     <span class="text-sm font-medium text-gray-500">Project Value</span>
-                    <span class="text-xl font-bold text-gray-900">$<?php echo number_format($payment['project_amount'], 2); ?></span>
+                    <span class="text-xl font-bold text-gray-900">₹<?php echo number_format($payment['project_amount'], 2); ?></span>
                 </div>
 
                 <div class="bg-green-50 p-4 rounded-lg flex justify-between items-center border border-green-100">
                     <span class="text-sm font-medium text-green-700">Received Amount</span>
-                    <span class="text-xl font-bold text-green-700">$<?php echo number_format($payment['received_amount'], 2); ?></span>
+                    <span class="text-xl font-bold text-green-700">₹<?php echo number_format($payment['received_amount'], 2); ?></span>
                 </div>
 
                 <div class="bg-red-50 p-4 rounded-lg flex justify-between items-center border border-red-100">
                     <span class="text-sm font-medium text-red-700">Pending Amount</span>
-                    <span class="text-xl font-bold text-red-700">$<?php echo number_format($payment['pending_amount'], 2); ?></span>
+                    <span class="text-xl font-bold text-red-700">₹<?php echo number_format($payment['pending_amount'], 2); ?></span>
                 </div>
             </div>
         </div>

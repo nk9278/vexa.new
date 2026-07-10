@@ -218,7 +218,7 @@ include __DIR__ . '/header.php';
                         <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 hover:shadow-sm transition">
                             <div class="flex justify-between items-center mb-2">
                                 <span class="text-sm font-medium text-gray-900">Submission #<?php echo $sub['revision_count'] + 1; ?></span>
-                                <span class="text-xs text-gray-500"><?php echo date('M d h:i A', strtotime($sub['created_at'])); ?></span>
+                                <span class="text-xs text-gray-500"><?php echo date('d-m-Y h:i A', strtotime($sub['created_at'])); ?></span>
                             </div>
 
                             <p class="text-sm text-gray-500 mb-2">Status:

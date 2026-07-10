@@ -43,7 +43,7 @@ require_once __DIR__ . '/../config/constants.php';
                         $unread_count = $bell_stmt->fetchColumn();
                     }
                     ?>
-                    <a href="/notifications/index.php" class="relative p-1 rounded-full text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition focus:outline-none">
+                    <a href="<?php echo BASE_URL; ?>/notifications/index.php" class="relative p-1 rounded-full text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition focus:outline-none">
                         <span class="sr-only">View notifications</span>
                         <!-- Bell icon -->
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">

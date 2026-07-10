@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
     <!-- Open Graph Tags -->
     <meta property="og:title" content="<?php echo APP_NAME; ?> - Digital Marketing Management Software">
     <meta property="og:description" content="Streamline your digital marketing agency. Manage projects, tasks, clients, and files effortlessly.">
-    <meta property="og:image" content="/assets/og-image.jpg">
+    <meta property="og:image" content="<?php echo BASE_URL; ?>/assets/og-image.jpg">
     <meta property="og:url" content="<?php echo BASE_URL; ?>">
     <meta property="og:type" content="website">
 
@@ -39,12 +39,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="<?php echo APP_NAME; ?> - Agency Management">
     <meta name="twitter:description" content="Streamline your digital marketing agency with <?php echo APP_NAME; ?>.">
-    <meta name="twitter:image" content="/assets/twitter-image.jpg">
+    <meta name="twitter:image" content="<?php echo BASE_URL; ?>/assets/twitter-image.jpg">
 
     <title><?php echo APP_NAME; ?> - Digital Marketing Management Software</title>
 
     <!-- Favicon Placeholder -->
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="<?php echo BASE_URL; ?>/favicon.ico" type="image/x-icon">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
                     <a href="#contact" class="text-gray-600 hover:text-indigo-600 font-medium transition">Contact</a>
                 </nav>
                 <div class="flex items-center space-x-4">
-                    <a href="/login.php" class="text-gray-600 hover:text-indigo-600 font-medium transition hidden sm:block">Login</a>
+                    <a href="<?php echo BASE_URL; ?>/login.php" class="text-gray-600 hover:text-indigo-600 font-medium transition hidden sm:block">Login</a>
                     <a href="#contact" class="bg-indigo-600 text-white px-6 py-2.5 rounded-full hover:bg-indigo-700 transition shadow-md font-medium">Request Demo</a>
                 </div>
             </div>
@@ -201,7 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
                     <!-- Basic -->
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center">
                         <h3 class="text-xl font-bold text-gray-900 mb-4">Starter</h3>
-                        <p class="text-4xl font-extrabold text-gray-900 mb-6">$49<span class="text-lg font-medium text-gray-500">/mo</span></p>
+                        <p class="text-4xl font-extrabold text-gray-900 mb-6">₹4999<span class="text-lg font-medium text-gray-500">/mo</span></p>
                         <ul class="text-gray-600 space-y-3 mb-8 text-left">
                             <li>✓ Up to 10 Team Members</li>
                             <li>✓ 50 Active Projects</li>
@@ -212,7 +212,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
                     <!-- Pro -->
                     <div class="bg-indigo-600 rounded-2xl shadow-xl border border-indigo-700 p-8 text-center transform md:-translate-y-4">
                         <h3 class="text-xl font-bold text-white mb-4">Professional</h3>
-                        <p class="text-4xl font-extrabold text-white mb-6">$99<span class="text-lg font-medium text-indigo-200">/mo</span></p>
+                        <p class="text-4xl font-extrabold text-white mb-6">₹9999<span class="text-lg font-medium text-indigo-200">/mo</span></p>
                         <ul class="text-indigo-100 space-y-3 mb-8 text-left">
                             <li>✓ Unlimited Team Members</li>
                             <li>✓ Unlimited Projects</li>
@@ -224,7 +224,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
                     <!-- Enterprise -->
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center">
                         <h3 class="text-xl font-bold text-gray-900 mb-4">Enterprise</h3>
-                        <p class="text-4xl font-extrabold text-gray-900 mb-6">$199<span class="text-lg font-medium text-gray-500">/mo</span></p>
+                        <p class="text-4xl font-extrabold text-gray-900 mb-6">₹19999<span class="text-lg font-medium text-gray-500">/mo</span></p>
                         <ul class="text-gray-600 space-y-3 mb-8 text-left">
                             <li>✓ White-label Solution</li>
                             <li>✓ Dedicated Account Manager</li>
@@ -319,7 +319,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
                 <div class="flex space-x-6 text-sm text-gray-400">
                     <a href="#" class="hover:text-white transition">Privacy Policy</a>
                     <a href="#" class="hover:text-white transition">Terms of Service</a>
-                    <a href="/login.php" class="hover:text-white transition font-medium">Employee Login</a>
+                    <a href="<?php echo BASE_URL; ?>/login.php" class="hover:text-white transition font-medium">Employee Login</a>
                 </div>
             </div>
             <div class="mt-8 text-center text-gray-500 text-sm border-t border-gray-800 pt-8">

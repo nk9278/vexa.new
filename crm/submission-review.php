@@ -156,7 +156,7 @@ include __DIR__ . '/header.php';
     <div class="space-y-6">
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden p-6">
             <h3 class="text-lg font-medium text-gray-900 border-b pb-3 mb-4">Employee Work</h3>
-            <p class="text-sm text-gray-500 mb-2">Submitted by: <span class="font-medium text-gray-900"><?php echo htmlspecialchars($submission['employee_name']); ?></span> on <?php echo date('M d, Y h:i A', strtotime($submission['created_at'])); ?></p>
+            <p class="text-sm text-gray-500 mb-2">Submitted by: <span class="font-medium text-gray-900"><?php echo htmlspecialchars($submission['employee_name']); ?></span> on <?php echo date('d-m-Y h:i A', strtotime($submission['created_at'])); ?></p>
             <p class="text-sm text-gray-500 mb-4">Current Status:
                 <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
                     <?php
@@ -199,7 +199,7 @@ include __DIR__ . '/header.php';
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <div class="flex justify-between items-center mb-2">
                                 <span class="text-sm font-medium text-gray-900"><?php echo htmlspecialchars($comment['full_name']); ?> <span class="text-xs text-gray-500 font-normal">(<?php echo htmlspecialchars($comment['role_name']); ?>)</span></span>
-                                <span class="text-xs text-gray-500"><?php echo date('M d h:i A', strtotime($comment['created_at'])); ?></span>
+                                <span class="text-xs text-gray-500"><?php echo date('d-m-Y h:i A', strtotime($comment['created_at'])); ?></span>
                             </div>
                             <?php if ($comment['comment_text']): ?>
                                 <p class="text-sm text-gray-700"><?php echo nl2br(htmlspecialchars($comment['comment_text'])); ?></p>

@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $payment_status = 'Partial';
         }
 
-        $last_payment_date = date('Y-m-d'); // Update last payment date when modifying
+        $last_payment_date = date('d-m-Y'); // Update last payment date when modifying
 
         // UPSERT
         $stmt = $pdo->prepare("
@@ -151,7 +151,7 @@ include __DIR__ . '/header.php';
                     <p class="text-sm text-gray-500 mb-2">Calculated Values (Updated on Save)</p>
                     <div class="flex justify-between items-center mb-2">
                         <span class="text-sm font-medium text-gray-700">Pending Amount:</span>
-                        <span class="text-lg font-bold text-red-600">$<?php echo number_format($payment['pending_amount'], 2); ?></span>
+                        <span class="text-lg font-bold text-red-600">₹<?php echo number_format($payment['pending_amount'], 2); ?></span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-sm font-medium text-gray-700">Current Status:</span>

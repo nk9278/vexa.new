@@ -103,14 +103,14 @@ include __DIR__ . '/../includes/header.php';
     <div class="flex flex-col sm:flex-row justify-between items-center mb-4">
         <h1 class="text-3xl font-bold leading-tight text-gray-900">Activity Timeline</h1>
         <div class="mt-4 sm:mt-0 flex space-x-2">
-            <a href="/notifications/index.php" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full hover:bg-gray-50 transition shadow-sm text-sm font-medium">Notification Center</a>
-            <a href="/notifications/audit.php" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full hover:bg-gray-50 transition shadow-sm text-sm font-medium">Audit Logs</a>
+            <a href="<?php echo BASE_URL; ?>/notifications/index.php" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full hover:bg-gray-50 transition shadow-sm text-sm font-medium">Notification Center</a>
+            <a href="<?php echo BASE_URL; ?>/notifications/audit.php" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full hover:bg-gray-50 transition shadow-sm text-sm font-medium">Audit Logs</a>
         </div>
     </div>
 </div>
 
 <div class="px-4 sm:px-6 mb-6">
-    <form method="GET" action="/notifications/activity.php" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+    <form method="GET" action="<?php echo BASE_URL; ?>/notifications/activity.php" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
 
         <select name="project_id" class="px-4 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white">
             <option value="">All Projects</option>
@@ -131,7 +131,7 @@ include __DIR__ . '/../includes/header.php';
         <div class="flex space-x-2">
             <button type="submit" class="w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition font-medium">Filter</button>
             <?php if($project_filter || $client_filter || $date_filter): ?>
-                <a href="/notifications/activity.php" class="w-full bg-red-50 text-red-600 px-4 py-2 rounded-lg hover:bg-red-100 transition font-medium text-center flex items-center justify-center">Clear</a>
+                <a href="<?php echo BASE_URL; ?>/notifications/activity.php" class="w-full bg-red-50 text-red-600 px-4 py-2 rounded-lg hover:bg-red-100 transition font-medium text-center flex items-center justify-center">Clear</a>
             <?php endif; ?>
         </div>
     </form>
@@ -159,7 +159,7 @@ include __DIR__ . '/../includes/header.php';
                                     <span class="font-bold text-gray-900"><?php echo htmlspecialchars($act['full_name']); ?></span>
                                     <span class="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded ml-2"><?php echo htmlspecialchars($act['role_name']); ?></span>
                                 </div>
-                                <span class="text-xs text-gray-400 mt-1 sm:mt-0"><?php echo date('M d, Y h:i A', strtotime($act['created_at'])); ?></span>
+                                <span class="text-xs text-gray-400 mt-1 sm:mt-0"><?php echo date('d-m-Y h:i A', strtotime($act['created_at'])); ?></span>
                             </div>
 
                             <p class="text-sm font-medium text-gray-800 mb-1"><?php echo htmlspecialchars($act['action']); ?></p>

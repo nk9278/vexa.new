@@ -67,14 +67,14 @@ include __DIR__ . '/../includes/header.php';
     <div class="flex flex-col sm:flex-row justify-between items-center mb-4">
         <h1 class="text-3xl font-bold leading-tight text-gray-900">Audit Logs</h1>
         <div class="mt-4 sm:mt-0 flex space-x-2">
-            <a href="/notifications/index.php" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full hover:bg-gray-50 transition shadow-sm text-sm font-medium">Notification Center</a>
-            <a href="/notifications/activity.php" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full hover:bg-gray-50 transition shadow-sm text-sm font-medium">Activity Timeline</a>
+            <a href="<?php echo BASE_URL; ?>/notifications/index.php" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full hover:bg-gray-50 transition shadow-sm text-sm font-medium">Notification Center</a>
+            <a href="<?php echo BASE_URL; ?>/notifications/activity.php" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full hover:bg-gray-50 transition shadow-sm text-sm font-medium">Activity Timeline</a>
         </div>
     </div>
 </div>
 
 <div class="px-4 sm:px-6 mb-6">
-    <form method="GET" action="/notifications/audit.php" class="flex flex-col sm:flex-row gap-4">
+    <form method="GET" action="<?php echo BASE_URL; ?>/notifications/audit.php" class="flex flex-col sm:flex-row gap-4">
         <select name="user_id" class="px-4 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white sm:w-64">
             <option value="">All Users</option>
             <?php foreach($filter_users as $u): ?>
@@ -86,7 +86,7 @@ include __DIR__ . '/../includes/header.php';
 
         <button type="submit" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition font-medium">Filter</button>
         <?php if($user_filter || $date_filter): ?>
-            <a href="/notifications/audit.php" class="bg-red-50 text-red-600 px-4 py-2 rounded-lg hover:bg-red-100 transition font-medium text-center flex items-center justify-center">Clear</a>
+            <a href="<?php echo BASE_URL; ?>/notifications/audit.php" class="bg-red-50 text-red-600 px-4 py-2 rounded-lg hover:bg-red-100 transition font-medium text-center flex items-center justify-center">Clear</a>
         <?php endif; ?>
     </form>
 </div>
@@ -108,7 +108,7 @@ include __DIR__ . '/../includes/header.php';
                     <?php foreach ($logs as $log): ?>
                         <tr class="hover:bg-gray-50">
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <?php echo date('Y-m-d H:i:s', strtotime($log['created_at'])); ?>
+                                <?php echo date('d-m-Y H:i:s', strtotime($log['created_at'])); ?>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm font-medium text-gray-900"><?php echo htmlspecialchars($log['full_name']); ?></div>

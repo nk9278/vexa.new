@@ -160,17 +160,17 @@ include __DIR__ . '/header.php';
             <div class="space-y-4">
                 <div class="bg-gray-50 p-4 rounded-lg flex justify-between items-center border border-gray-100">
                     <span class="text-sm font-medium text-gray-500">Total Project Value</span>
-                    <span class="text-xl font-bold text-gray-900">$<?php echo number_format($total_value, 2); ?></span>
+                    <span class="text-xl font-bold text-gray-900">₹<?php echo number_format($total_value, 2); ?></span>
                 </div>
 
                 <div class="bg-green-50 p-4 rounded-lg flex justify-between items-center border border-green-100">
                     <span class="text-sm font-medium text-green-700">Total Received</span>
-                    <span class="text-xl font-bold text-green-700">$<?php echo number_format($total_received, 2); ?></span>
+                    <span class="text-xl font-bold text-green-700">₹<?php echo number_format($total_received, 2); ?></span>
                 </div>
 
                 <div class="bg-red-50 p-4 rounded-lg flex justify-between items-center border border-red-100">
                     <span class="text-sm font-medium text-red-700">Total Due (Pending)</span>
-                    <span class="text-xl font-bold text-red-700">$<?php echo number_format($total_pending, 2); ?></span>
+                    <span class="text-xl font-bold text-red-700">₹<?php echo number_format($total_pending, 2); ?></span>
                 </div>
             </div>
         </div>

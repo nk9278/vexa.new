@@ -88,10 +88,10 @@ include __DIR__ . '/../includes/header.php';
     <div class="flex flex-col sm:flex-row justify-between items-center mb-4">
         <h1 class="text-3xl font-bold leading-tight text-gray-900">Notification Center</h1>
         <div class="mt-4 sm:mt-0 flex space-x-2">
-            <a href="/notifications/activity.php" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full hover:bg-gray-50 transition shadow-sm text-sm font-medium">Activity Timeline</a>
-            <a href="/notifications/audit.php" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full hover:bg-gray-50 transition shadow-sm text-sm font-medium">Audit Logs</a>
+            <a href="<?php echo BASE_URL; ?>/notifications/activity.php" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full hover:bg-gray-50 transition shadow-sm text-sm font-medium">Activity Timeline</a>
+            <a href="<?php echo BASE_URL; ?>/notifications/audit.php" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full hover:bg-gray-50 transition shadow-sm text-sm font-medium">Audit Logs</a>
 
-            <form method="POST" action="/notifications/index.php" class="inline-block">
+            <form method="POST" action="<?php echo BASE_URL; ?>/notifications/index.php" class="inline-block">
                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
                 <input type="hidden" name="mark_all_read" value="1">
                 <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition shadow-sm text-sm font-medium">Mark All as Read</button>
@@ -112,7 +112,7 @@ include __DIR__ . '/../includes/header.php';
 <?php endif; ?>
 
 <div class="px-4 sm:px-6 mb-6">
-    <form method="GET" action="/notifications/index.php" class="flex flex-col sm:flex-row gap-4">
+    <form method="GET" action="<?php echo BASE_URL; ?>/notifications/index.php" class="flex flex-col sm:flex-row gap-4">
         <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search notifications..." class="px-4 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500 w-full sm:w-64 outline-none">
         <select name="status" class="px-4 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white">
             <option value="">All Statuses</option>
@@ -122,7 +122,7 @@ include __DIR__ . '/../includes/header.php';
         </select>
         <button type="submit" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition font-medium">Filter</button>
         <?php if($search || $status_filter): ?>
-            <a href="/notifications/index.php" class="bg-red-50 text-red-600 px-4 py-2 rounded-lg hover:bg-red-100 transition font-medium text-center">Clear</a>
+            <a href="<?php echo BASE_URL; ?>/notifications/index.php" class="bg-red-50 text-red-600 px-4 py-2 rounded-lg hover:bg-red-100 transition font-medium text-center">Clear</a>
         <?php endif; ?>
     </form>
 </div>
@@ -160,13 +160,13 @@ include __DIR__ . '/../includes/header.php';
 
                                 <div class="mt-3 flex space-x-3">
                                     <?php if ($note['status'] === 'Unread'): ?>
-                                        <form method="POST" action="/notifications/index.php" class="inline-block">
+                                        <form method="POST" action="<?php echo BASE_URL; ?>/notifications/index.php" class="inline-block">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
                                             <input type="hidden" name="mark_read_id" value="<?php echo $note['id']; ?>">
                                             <button type="submit" class="text-xs font-medium text-indigo-600 hover:text-indigo-800">Mark as Read</button>
                                         </form>
                                     <?php endif; ?>
-                                    <form method="POST" action="/notifications/index.php" class="inline-block" onsubmit="return confirm('Delete this notification?');">
+                                    <form method="POST" action="<?php echo BASE_URL; ?>/notifications/index.php" class="inline-block" onsubmit="return confirm('Delete this notification?');">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
                                         <input type="hidden" name="delete_id" value="<?php echo $note['id']; ?>">
                                         <button type="submit" class="text-xs font-medium text-red-600 hover:text-red-800">Delete</button>

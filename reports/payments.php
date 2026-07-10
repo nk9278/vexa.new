@@ -71,7 +71,7 @@ include __DIR__ . '/../includes/header.php';
                 </select>
             </form>
 
-            <a href="/api/export.php?report=payments&date=<?php echo urlencode($date_filter); ?>" class="bg-indigo-600 text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition shadow-sm text-sm font-medium flex items-center">
+            <a href="<?php echo BASE_URL; ?>/api/export.php?report=payments&date=<?php echo urlencode($date_filter); ?>" class="bg-indigo-600 text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition shadow-sm text-sm font-medium flex items-center">
                 CSV
             </a>
             <button onclick="exportToPDF()" class="bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-700 transition shadow-sm text-sm font-medium flex items-center">
@@ -96,15 +96,15 @@ include __DIR__ . '/../includes/header.php';
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
             <p class="text-sm text-gray-500 font-medium">Total Billed Revenue</p>
-            <p class="text-3xl font-bold text-gray-900 mt-2">$<?php echo number_format($total_revenue, 2); ?></p>
+            <p class="text-3xl font-bold text-gray-900 mt-2">₹<?php echo number_format($total_revenue, 2); ?></p>
         </div>
         <div class="bg-green-50 p-6 rounded-xl shadow-sm border border-green-200">
             <p class="text-sm text-green-600 font-medium">Total Received Revenue</p>
-            <p class="text-3xl font-bold text-green-700 mt-2">$<?php echo number_format($total_received, 2); ?></p>
+            <p class="text-3xl font-bold text-green-700 mt-2">₹<?php echo number_format($total_received, 2); ?></p>
         </div>
         <div class="bg-red-50 p-6 rounded-xl shadow-sm border border-red-200">
             <p class="text-sm text-red-600 font-medium">Total Pending Revenue</p>
-            <p class="text-3xl font-bold text-red-700 mt-2">$<?php echo number_format($total_pending, 2); ?></p>
+            <p class="text-3xl font-bold text-red-700 mt-2">₹<?php echo number_format($total_pending, 2); ?></p>
         </div>
     </div>
 
@@ -129,13 +129,13 @@ include __DIR__ . '/../includes/header.php';
                                 <div class="text-xs text-gray-500"><?php echo htmlspecialchars($pay['client_name']); ?></div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right font-medium">
-                                $<?php echo number_format($pay['project_amount'], 2); ?>
+                                ₹<?php echo number_format($pay['project_amount'], 2); ?>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 text-right font-medium">
-                                $<?php echo number_format($pay['received_amount'], 2); ?>
+                                ₹<?php echo number_format($pay['received_amount'], 2); ?>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600 text-right font-medium">
-                                $<?php echo number_format($pay['pending_amount'], 2); ?>
+                                ₹<?php echo number_format($pay['pending_amount'], 2); ?>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full

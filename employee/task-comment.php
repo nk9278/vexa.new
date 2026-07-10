@@ -174,7 +174,7 @@ include __DIR__ . '/header.php';
                         <div class="p-4 rounded-lg <?php echo $comment['user_id'] == $user_id ? 'bg-indigo-50 ml-8' : 'bg-gray-50 mr-8'; ?>">
                             <div class="flex justify-between items-center mb-2">
                                 <span class="text-sm font-medium text-gray-900"><?php echo htmlspecialchars($comment['full_name']); ?> <span class="text-xs text-gray-500 font-normal">(<?php echo htmlspecialchars($comment['role_name']); ?>)</span></span>
-                                <span class="text-xs text-gray-500"><?php echo date('M d h:i A', strtotime($comment['created_at'])); ?></span>
+                                <span class="text-xs text-gray-500"><?php echo date('d-m-Y h:i A', strtotime($comment['created_at'])); ?></span>
                             </div>
                             <?php if ($comment['comment_text']): ?>
                                 <p class="text-sm text-gray-700"><?php echo nl2br(htmlspecialchars($comment['comment_text'])); ?></p>

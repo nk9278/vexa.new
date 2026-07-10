@@ -188,7 +188,7 @@ include __DIR__ . '/header.php';
                                         <span class="bg-indigo-50 text-indigo-700 px-2 py-1 rounded text-xs font-medium"><?php echo htmlspecialchars($member['role']); ?></span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        <?php echo date('M d, Y', strtotime($member['created_at'])); ?>
+                                        <?php echo date('d-m-Y', strtotime($member['created_at'])); ?>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <form method="POST" action="project-team.php?id=<?php echo $project_id; ?>" onsubmit="return confirm('Remove this employee from the project?');">

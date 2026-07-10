@@ -132,7 +132,7 @@ include __DIR__ . '/header.php';
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900"><?php echo htmlspecialchars($agency['plan_name'] ?? 'N/A'); ?></div>
                                     <div class="text-xs text-gray-500">
-                                        <?php echo $agency['end_date'] ? 'Ends: ' . date('M d, Y', strtotime($agency['end_date'])) : ''; ?>
+                                        <?php echo $agency['end_date'] ? 'Ends: ' . date('d-m-Y', strtotime($agency['end_date'])) : ''; ?>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">

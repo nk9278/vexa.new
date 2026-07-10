@@ -25,25 +25,25 @@ include __DIR__ . '/header.php';
     <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-100">
         <div class="px-4 py-5 sm:p-6">
             <dt class="text-sm font-medium text-gray-500 truncate">Total Client Value</dt>
-            <dd class="mt-1 text-2xl font-semibold text-indigo-600">$<?php echo number_format($placeholders['total_client_value'], 2); ?></dd>
+            <dd class="mt-1 text-2xl font-semibold text-indigo-600">₹<?php echo number_format($placeholders['total_client_value'], 2); ?></dd>
         </div>
     </div>
     <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-100">
         <div class="px-4 py-5 sm:p-6">
             <dt class="text-sm font-medium text-gray-500 truncate">Total Received</dt>
-            <dd class="mt-1 text-2xl font-semibold text-green-600">$<?php echo number_format($placeholders['total_received'], 2); ?></dd>
+            <dd class="mt-1 text-2xl font-semibold text-green-600">₹<?php echo number_format($placeholders['total_received'], 2); ?></dd>
         </div>
     </div>
     <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-100">
         <div class="px-4 py-5 sm:p-6">
             <dt class="text-sm font-medium text-gray-500 truncate">Pending Amount</dt>
-            <dd class="mt-1 text-2xl font-semibold text-orange-500">$<?php echo number_format($placeholders['pending_amount'], 2); ?></dd>
+            <dd class="mt-1 text-2xl font-semibold text-orange-500">₹<?php echo number_format($placeholders['pending_amount'], 2); ?></dd>
         </div>
     </div>
     <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-100">
         <div class="px-4 py-5 sm:p-6">
             <dt class="text-sm font-medium text-gray-500 truncate">Overdue Amount</dt>
-            <dd class="mt-1 text-2xl font-semibold text-red-600">$<?php echo number_format($placeholders['overdue_amount'], 2); ?></dd>
+            <dd class="mt-1 text-2xl font-semibold text-red-600">₹<?php echo number_format($placeholders['overdue_amount'], 2); ?></dd>
         </div>
     </div>
 </div>
