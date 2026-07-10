@@ -8,6 +8,8 @@ define('DB_NAME', 'vexa_db');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 
+define('APP_ENV', 'development'); // Set to 'production' in live environment
+
 // Roles
 define('ROLE_SUPER_ADMIN', 1);
 define('ROLE_AGENCY_OWNER', 2);
