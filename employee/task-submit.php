@@ -59,7 +59,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = "You must provide text, a voice note, or a file attachment.";
         }
 
-        // Handle File Upload
+        // Handle File Upload Error State
+        if (!$error && isset($_FILES['work_file']) && $_FILES['work_file']['error'] !== UPLOAD_ERR_NO_FILE) {
+            if ($_FILES['work_file']['error'] === UPLOAD_ERR_INI_SIZE || $_FILES['work_file']['error'] === UPLOAD_ERR_FORM_SIZE) {
+                $error = "File size exceeds the server's maximum upload limit.";
+            } elseif ($_FILES['work_file']['error'] !== UPLOAD_ERR_OK) {
+                $error = "An error occurred during file upload (Code: " . $_FILES['work_file']['error'] . ").";
+            }
+        }
+
+        // Handle File Upload Success State
         if (!$error && isset($_FILES['work_file']) && $_FILES['work_file']['error'] === UPLOAD_ERR_OK) {
             $upload_dir = __DIR__ . '/../uploads/submissions/';
             if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
@@ -69,9 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $file_info = pathinfo($_FILES['work_file']['name']);
             $ext = strtolower($file_info['extension'] ?? '');
 
-            if ($_FILES['work_file']['size'] > 50 * 1024 * 1024) { // 50MB limit
-                $error = "File size exceeds 50MB limit.";
-            } elseif (!in_array($ext, $allowed_file_exts)) {
+            if (!in_array($ext, $allowed_file_exts)) {
                 $error = "Invalid file type. Allowed: " . implode(', ', $allowed_file_exts);
             } else {
                 $filename = uniqid('sub_', true) . '.' . $ext;
@@ -108,14 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $filename = uniqid('vn_', true) . '.' . $ext;
                 $full_local_path = $upload_dir . $filename;
                 if (move_uploaded_file($_FILES['voice_note']['tmp_name'], $full_local_path)) {
-                    // Try to upload to Google Drive
-                    $drive_result = uploadToGoogleDrive($_SESSION['agency_id'], $task['project_id'], $user_id, 'Other', $full_local_path, $_FILES['voice_note']['name'], $_FILES['voice_note']['size']);
-
-                    if ($drive_result && isset($drive_result['drive_link'])) {
-                        $voice_note_path = $drive_result['drive_link']; // Replace local path with drive link
-                    } else {
-                        $voice_note_path = '/uploads/voice_notes/' . $filename; // Fallback to local
-                    }
+                    $voice_note_path = '/uploads/voice_notes/' . $filename;
                 } else {
                     $error = "Failed to upload voice note.";
                 }

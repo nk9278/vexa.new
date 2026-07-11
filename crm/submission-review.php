@@ -44,8 +44,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $comment_text = sanitizeInput($_POST['comment_text'] ?? '');
         $voice_note_path = null;
 
-        // Handle voice note upload
-        if (isset($_FILES['voice_note']) && $_FILES['voice_note']['error'] === UPLOAD_ERR_OK) {
+        // Handle voice note error state
+        if (!$error && isset($_FILES['voice_note']) && $_FILES['voice_note']['error'] !== UPLOAD_ERR_NO_FILE) {
+            if ($_FILES['voice_note']['error'] === UPLOAD_ERR_INI_SIZE || $_FILES['voice_note']['error'] === UPLOAD_ERR_FORM_SIZE) {
+                $error = "Voice note exceeds the server's maximum upload limit.";
+            } elseif ($_FILES['voice_note']['error'] !== UPLOAD_ERR_OK) {
+                $error = "An error occurred during voice note upload (Code: " . $_FILES['voice_note']['error'] . ").";
+            }
+        }
+
+        // Handle voice note upload success state
+        if (!$error && isset($_FILES['voice_note']) && $_FILES['voice_note']['error'] === UPLOAD_ERR_OK) {
             $allowed_extensions = ['mp3', 'wav', 'ogg', 'm4a', 'webm'];
             $file_info = pathinfo($_FILES['voice_note']['name']);
             $file_extension = strtolower($file_info['extension'] ?? '');
@@ -65,14 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $target_file = $upload_dir . $filename;
 
                 if (move_uploaded_file($_FILES['voice_note']['tmp_name'], $target_file)) {
-                    // Try to upload to Google Drive
-                    $drive_result = uploadToGoogleDrive($_SESSION['agency_id'], $submission['task_id'], $user_id, 'Other', $target_file, $_FILES['voice_note']['name'], $_FILES['voice_note']['size']);
-
-                    if ($drive_result && isset($drive_result['drive_link'])) {
-                        $voice_note_path = $drive_result['drive_link']; // Replace local path with drive link
-                    } else {
-                        $voice_note_path = '/uploads/voice_notes/' . $filename; // Fallback to local
-                    }
+                    $voice_note_path = '/uploads/voice_notes/' . $filename;
                 } else {
                     $error = "Failed to save voice note.";
                 }
