@@ -56,7 +56,7 @@ include __DIR__ . '/header.php';
 ?>
 
 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-    <h1 class="text-3xl font-bold leading-tight text-gray-900">Welcome, <?php echo htmlspecialchars($_SESSION['full_name']); ?></h1>
+    <h1 class="text-3xl font-bold leading-tight text-gray-900">Welcome, <?php echo htmlspecialchars($_SESSION['full_name'] ?? 'User'); ?></h1>
 </div>
 
 <div class="mt-6 px-4 sm:px-6">

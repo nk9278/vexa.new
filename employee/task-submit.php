@@ -69,7 +69,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $file_info = pathinfo($_FILES['work_file']['name']);
             $ext = strtolower($file_info['extension'] ?? '');
 
-            if (!in_array($ext, $allowed_file_exts)) {
+            if ($_FILES['work_file']['size'] > 50 * 1024 * 1024) { // 50MB limit
+                $error = "File size exceeds 50MB limit.";
+            } elseif (!in_array($ext, $allowed_file_exts)) {
                 $error = "Invalid file type. Allowed: " . implode(', ', $allowed_file_exts);
             } else {
                 $filename = uniqid('sub_', true) . '.' . $ext;
@@ -95,7 +97,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $file_info = pathinfo($_FILES['voice_note']['name']);
             $ext = strtolower($file_info['extension'] ?? '');
 
-            if (!in_array($ext, $allowed_audio)) {
+            if ($_FILES['voice_note']['size'] > 10 * 1024 * 1024) { // 10MB limit for audio
+                $error = "Voice note exceeds 10MB limit.";
+            } elseif (!in_array($ext, $allowed_audio)) {
                 $error = "Invalid audio format.";
             } else {
                 $upload_dir = __DIR__ . '/../uploads/voice_notes/';

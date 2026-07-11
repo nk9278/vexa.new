@@ -100,13 +100,13 @@ $placeholders = [
     <div class="bg-gradient-to-r from-green-500 to-emerald-600 overflow-hidden shadow-md rounded-xl text-white hover:shadow-lg transition">
         <div class="px-4 py-5 sm:p-6">
             <dt class="text-sm font-medium truncate opacity-80">Total Revenue</dt>
-            <dd class="mt-1 text-4xl font-bold">$<?php echo number_format($placeholders['total_revenue'], 2); ?></dd>
+            <dd class="mt-1 text-4xl font-bold">₹<?php echo number_format($placeholders['total_revenue'], 2); ?></dd>
         </div>
     </div>
     <div class="bg-gradient-to-r from-orange-400 to-red-500 overflow-hidden shadow-md rounded-xl text-white hover:shadow-lg transition">
         <div class="px-4 py-5 sm:p-6">
             <dt class="text-sm font-medium truncate opacity-80">Pending Revenue</dt>
-            <dd class="mt-1 text-4xl font-bold">$<?php echo number_format($placeholders['pending_revenue'], 2); ?></dd>
+            <dd class="mt-1 text-4xl font-bold">₹<?php echo number_format($placeholders['pending_revenue'], 2); ?></dd>
         </div>
     </div>
 </div>

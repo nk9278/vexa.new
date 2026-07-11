@@ -49,7 +49,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $file_info = pathinfo($_FILES['voice_note']['name']);
             $ext = strtolower($file_info['extension'] ?? '');
 
-            if (!in_array($ext, $allowed_audio)) {
+            if ($_FILES['voice_note']['size'] > 10 * 1024 * 1024) { // 10MB limit for audio
+                $error = "Voice note exceeds 10MB limit.";
+            } elseif (!in_array($ext, $allowed_audio)) {
                 $error = "Invalid audio format.";
             } else {
                 $upload_dir = __DIR__ . '/../uploads/voice_notes/';
