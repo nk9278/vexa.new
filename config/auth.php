@@ -7,7 +7,7 @@ require_once __DIR__ . '/functions.php';
 function loginUser($email, $password, $auto_redirect = true) {
     $pdo = getDbConnection();
 
-    $stmt = $pdo->prepare("SELECT u.*, r.name as role_name FROM users u JOIN roles r ON u.role_id = r.id WHERE u.email_address = :email LIMIT 1");
+    $stmt = $pdo->prepare("SELECT u.*, r.name as role_name FROM users u JOIN roles r ON u.role_id = r.id WHERE u.email_address = :email AND u.deleted_at IS NULL LIMIT 1");
     $stmt->execute(['email' => $email]);
     $user = $stmt->fetch();
 

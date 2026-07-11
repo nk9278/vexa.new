@@ -14,6 +14,10 @@ function getDbConnection() {
         return new PDO($dsn, DB_USER, DB_PASS, $options);
     } catch (\PDOException $e) {
         // In production, log the error rather than echoing
-        die("Database connection failed: " . $e->getMessage());
+        if (defined('APP_ENV') && APP_ENV === 'development') {
+            die("Database connection failed: " . $e->getMessage());
+        } else {
+            die("A database error occurred. Please try again later.");
+        }
     }
 }

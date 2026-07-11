@@ -67,8 +67,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'price' => $price
                     ]);
 
+                    // Insert Agency Owner User
+                    $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+                    $temp_password = '';
+                    for ($i = 0; $i < 10; $i++) {
+                        $temp_password .= $chars[random_int(0, strlen($chars) - 1)];
+                    }
+                    $hashed_password = password_hash($temp_password, PASSWORD_DEFAULT);
+
+                    $user_status = $status;
+                    if ($status === 'Demo' || $status === 'Expired') {
+                        $user_status = 'Demo Expired';
+                    }
+
+                    $stmt = $pdo->prepare("INSERT INTO users (agency_id, role_id, full_name, email_address, password, force_password_change, account_status) VALUES (:agency_id, :role_id, :full_name, :email, :password, 1, :account_status)");
+                    $stmt->execute([
+                        'agency_id' => $agency_id,
+                        'role_id' => ROLE_AGENCY_OWNER,
+                        'full_name' => $owner_name,
+                        'email' => $email,
+                        'password' => $hashed_password,
+                        'account_status' => $user_status
+                    ]);
+
                     $pdo->commit();
-                    $success = "Agency added successfully.";
+
+                    if (defined('APP_ENV') && APP_ENV === 'development') {
+                        $success = "Agency added successfully. Temporary Password: <strong>$temp_password</strong> (Please copy this, it will not be shown again.)";
+                    } else {
+                        $success = "Agency added successfully.";
+                    }
                     // Optionally redirect to agencies list
                     // redirect('/super-admin/agencies.php');
                 } catch (Exception $e) {
