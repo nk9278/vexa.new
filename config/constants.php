@@ -2,7 +2,8 @@
 // File: /config/constants.php
 
 define('APP_NAME', 'VEXA');
-define('BASE_URL', 'http://localhost'); // Adjust in production
+define('APP_ENV', 'production');
+define('BASE_URL', 'https://yourdomain.com'); // Adjust in production
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'vexa_db');
 define('DB_USER', 'root');
