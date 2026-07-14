@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /config/
+Disallow: /includes/
+Disallow: /api/
+Disallow: /uploads/
+Disallow: /*.php$
+
+Sitemap: http://localhost/sitemap.xml

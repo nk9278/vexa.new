@@ -77,7 +77,7 @@ include __DIR__ . '/header.php';
                 </div>
                 <div class="sm:col-span-1">
                     <dt class="text-sm font-medium text-gray-500">Created Date</dt>
-                    <dd class="mt-1 text-sm text-gray-900"><?php echo date('M d, Y h:i A', strtotime($manager['created_at'])); ?></dd>
+                    <dd class="mt-1 text-sm text-gray-900"><?php echo date('d-m-Y h:i A', strtotime($manager['created_at'])); ?></dd>
                 </div>
             </dl>
         </div>

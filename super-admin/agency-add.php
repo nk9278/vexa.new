@@ -67,10 +67,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'price' => $price
                     ]);
 
+                    // Generate a temporary password for the Agency Owner
+                    $temp_password = bin2hex(random_bytes(4)); // Generates an 8-character string
+                    $hashed_password = password_hash($temp_password, PASSWORD_DEFAULT);
+
+                    // Insert Agency Owner User
+                    $stmt = $pdo->prepare("INSERT INTO users (agency_id, role_id, full_name, email_address, password, force_password_change, account_status) VALUES (:agency_id, :role_id, :full_name, :email_address, :password, 1, 'Active')");
+                    $stmt->execute([
+                        'agency_id' => $agency_id,
+                        'role_id' => ROLE_AGENCY_OWNER,
+                        'full_name' => $owner_name,
+                        'email_address' => $email,
+                        'password' => $hashed_password
+                    ]);
+
                     $pdo->commit();
-                    $success = "Agency added successfully.";
-                    // Optionally redirect to agencies list
-                    // redirect('/super-admin/agencies.php');
+
+                    // Display the temporary password safely via session before redirect
+                    $_SESSION['success_msg'] = "Agency added successfully. Temporary Login Password for $email is: <strong>$temp_password</strong>";
+                    redirect('/super-admin/agencies.php');
                 } catch (Exception $e) {
                     $pdo->rollBack();
                     $error = "Failed to add agency: " . $e->getMessage();
